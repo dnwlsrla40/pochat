@@ -1,4 +1,4 @@
-package com.woojin.pochat.domain.user;
+package com.woojin.pochat.domain.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

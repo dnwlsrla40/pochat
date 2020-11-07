@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
+	implementation 'junit:junit:4.12'
 
 	// random string 관련
 	compile('org.apache.commons:commons-lang3:3.4')

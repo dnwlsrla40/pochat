@@ -1,19 +1,19 @@
 package com.woojin.pochat.dto;
 
-import com.woojin.pochat.domain.user.User;
+import com.woojin.pochat.domain.member.Member;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-public class UserDto {
+public class MemberDto {
 
     @NoArgsConstructor
     @Data
-    public static class UserCreateRequestDto {
+    public static class MemberCreateRequestDto {
         private String username;
         private String password;
 
-        public User toEntity(){
-            return User.builder()
+        public Member toEntity(){
+            return Member.builder()
                     .username(this.username)
                     .password(this.password)
                     .build();

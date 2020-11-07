@@ -1,17 +1,19 @@
-package com.woojin.pochat.domain.user;
+package com.woojin.pochat.domain.member;
 
 import com.woojin.pochat.domain.BaseTimeEntity;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Getter
 @NoArgsConstructor
+@Data
 @Entity
-public class User extends BaseTimeEntity {
+public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +25,7 @@ public class User extends BaseTimeEntity {
     private String password;
 
     @Builder
-    public User(String username, String password){
+    public Member(String username, String password){
 
         Assert.notNull(username, "username must be not null");
         Assert.notNull(password, "password must be not null");
