@@ -31,12 +31,15 @@ public class MemberService implements UserDetailsService {
 
     @Transactional
     public Member signup(MemberDto.MemberCreateRequestDto requestDto){
-        System.out.println("service signup");
-        System.out.println(requestDto.getUsername());
-        System.out.println(requestDto.getPassword());
         requestDto.setPassword(passwordEncoder().encode(requestDto.getPassword()));
-        System.out.println("service 2");
         return memberRepository.save(requestDto.toEntity());
+    }
+
+    @Transactional
+    public Member readUser(String username) {
+        Optional<Member> optional = memberRepository.findByUsername(username);
+        Member member = optional.get();
+        return member;
     }
 
     @Override
