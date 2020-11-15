@@ -65,6 +65,14 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'prefer-promise-reject-errors': 'off',
 
+    'no-trailing-spaces' : 'off',
+    'key-spacing' : 'off',
+    'object-curly-spacing' : 'off',
+    'no-multiple-empty-lines' : 'off',
+    'vue/no-unused-components' : 'off',
+    'object-curly-newline' : 'off',
+    'indent' : 'off',
+    'comma-dangle' : 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'

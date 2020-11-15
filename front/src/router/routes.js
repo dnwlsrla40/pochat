@@ -2,9 +2,30 @@
 const routes = [
   {
     path: '/',
+    component: () => import('layouts/NoLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/intro/SignInPage.vue') }
+    ]
+  },
+
+  {
+    path: '/main',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { 
+        path: '',
+        component: () => import('pages/main/MainPage.vue'),
+        children : [
+          {
+            path : '',
+            component: () => import('components/fragments/MainContent.vue')
+          },
+          {
+            path : 'post',
+            component: () => import('components/fragments/PostEditor.vue')
+          },
+        ]
+      }
     ]
   },
 
