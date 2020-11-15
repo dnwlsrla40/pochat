@@ -73,6 +73,8 @@ module.exports = {
     'object-curly-newline' : 'off',
     'indent' : 'off',
     'comma-dangle' : 'off',
+    'space-in-parens' : 'off',
+    'brace-style'  : 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'

@@ -1,17 +1,17 @@
 <template>
-  <q-layout>
+  <q-layout class="window-height">
 
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-purple-4 q-px-lg">
         <q-toolbar-title>
           <span>PoChat</span>
         </q-toolbar-title>
 
         <q-space  />
 
-        <div class="q-gutter-x-md">
-          <q-btn label="MYPAGE" />
-          <q-btn label="LOGOUT" to="/" />
+        <div class="q-gutter-x-sm">
+          <q-btn label="MYPAGE" color="primary" />
+          <q-btn label="LOGOUT" color="primary" to="/" />
         </div>
       </q-toolbar>
     </q-header>

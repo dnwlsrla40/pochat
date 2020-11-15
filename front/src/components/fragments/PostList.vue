@@ -1,42 +1,31 @@
 <template>
-  <q-card>
+  <q-card class="bg-grey-2">
 
-    <q-card-section>
-      <div class="flex justify-center q-gutter-x-sm">
+    <q-card-section class="bg-deep-purple-1">
+      <div class="flex justify-between items-center">
         <span class="text-h6">포스트 목록</span>
-        <q-btn label="추가" to="/main/post" />
-        <q-btn label="즐겨찾기" />
+        <div class="q-gutter-x-sm">
+          <q-btn size="sm" color="primary" label="추가" to="/main/post" />
+          <q-btn size="sm" color="primary" label="즐겨찾기" />
+        </div>
       </div>
     </q-card-section>
 
     <q-separator />
-    <q-card-section class="no-padding">
 
-      <!-- 오버플로우 Y 넘침 -->
-      <q-list>
+    <q-card-section class="no-padding" >
 
-        <!-- 즐겨찾기 -->
-        <q-item clickable v-ripple v-for="(number) in 5" :key="number">
+      <q-list class="scroll" style="height : calc(100vh - 155px);">
+
+        <q-item clickable v-ripple v-for="(number, index) in 10" :key="`post-${index}`" :active="active === index" @click="active = index;"  active-class="active">
           <q-item-section>
-            <q-item-label>즐겨찾기 된 포스팅</q-item-label>
+            <q-item-label>포스트</q-item-label>
             <q-item-label caption lines="2">Secondary line text. Lorem ipsum dolor sit amet, consectetur adipiscit elit.</q-item-label>
           </q-item-section>
 
           <q-item-section side top>
             <q-item-label caption>5 min ago</q-item-label>
-            <q-icon name="star" color="yellow" />
-          </q-item-section>
-        </q-item>
-
-        <!-- 일반포스팅 -->
-        <q-item clickable v-ripple v-for="(number) in 5" :key="number">
-          <q-item-section>
-            <q-item-label>일반 포스팅</q-item-label>
-            <q-item-label caption lines="2">Secondary line text. Lorem ipsum dolor sit amet, consectetur adipiscit elit.</q-item-label>
-          </q-item-section>
-
-          <q-item-section side top>
-            <q-item-label caption>5 min ago</q-item-label>
+            <q-icon v-if="index % 2 == 0" name="star" color="yellow" />
           </q-item-section>
         </q-item>
         
@@ -47,6 +36,11 @@
 
 <script>
 export default {
-  name: 'PostList'
+  name: 'PostList',
+  data () {
+    return {
+      active : -1
+    }
+  }
 }
 </script>

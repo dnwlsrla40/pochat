@@ -1,5 +1,5 @@
 <template>
-  <q-page class="column justify-center" >
+  <q-page class="column justify-center">
     <div class="col-auto row justify-center">
       <div class="col-2 q-gutter-y-md">
         <div class="text-center">
@@ -13,9 +13,13 @@
             </q-card-section>
 
             <q-card-section class="flex justify-center q-gutter-x-md">
-              <q-btn label="signUp" />
-              <q-btn label="login" color="purple" to="main" />
+              <q-btn label="signUp" color="purple-3" />
+              <q-btn label="login" color="primary" to="main" />
             </q-card-section>
+
+            <!-- 지워 -->
+            <div class="text-center">컬러 맘에 안들면 바꿔줄게</div>
+
           </q-form>
         </q-card>
       </div>

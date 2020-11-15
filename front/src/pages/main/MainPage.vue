@@ -1,20 +1,13 @@
 <template>
-  <q-page class="row q-pa-md q-gutter-x-md">
+  <q-page class="row q-pa-md q-gutter-x-md bg-grey-1">
 
-    <chat-list class="col-2" />
+    <chat-list class="col-2" style="min-width : 317px !important;" />
 
-    <div class="col">
-      <!-- <template v-if="postingMode">
-        <post-editor />
-      </template>
-
-      <tmeplete v-else>
-        <main-content />
-      </tmeplete> -->
+    <div class="col" style="min-width : 720px !important;">
       <router-view />
     </div>
     
-    <post-list class="col-2" />
+    <post-list class="col-2" style="min-width : 317px !important;" />
     
   </q-page>
 </template>

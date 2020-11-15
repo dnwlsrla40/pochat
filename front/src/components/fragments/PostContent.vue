@@ -1,15 +1,15 @@
 <template>
-  <q-card flat bordered square class="my-card bg-grey-1">
-    <q-card-section>
+  <q-card flat square class="bg-grey-2 full-height">
+    <q-card-section class="bg-deep-purple-1 ">
       <div class="row items-center no-wrap">
-        <div class="col">
-          <div class="text-h6">포스트 제목</div>
-          <div class="text-subtitle2">by 누구누구</div>
+        <div class="col text-overflow-hidden">
+          <div class="text-h6 ">포스트 제목</div>
+          <div class="text-subtitle2 absolute" style="bottom : 2px;">by 누구누구</div>
         </div>
 
         <div class="col-auto">
-          <q-btn color="grey-7" round flat icon="more_vert">
-            <q-menu cover auto-close>
+          <q-btn size="sm" color="grey-7" round flat icon="more_vert">
+            <q-menu auto-close>
               <q-list>
                 <q-item clickable>
                   <q-item-section>수정하기</q-item-section>
@@ -25,8 +25,8 @@
     </q-card-section>
 
     <q-separator />
-
-    <q-card-section>
+    
+    <q-card-section class="scroll" style="height : calc(100vh - 236px);">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a nibh tincidunt, luctus ligula at, tincidunt mauris. Quisque at nunc id eros iaculis facilisis. Maecenas eget nibh metus. Morbi congue elit erat, quis ornare lectus semper nec. Fusce tellus urna, consequat quis convallis ut, posuere a elit. Fusce feugiat dolor lacus, a porta mauris porttitor id. Praesent aliquet vitae elit a rhoncus.
 
 Aenean at lorem et velit vehicula tristique. Praesent finibus ornare metus ornare iaculis. Fusce id volutpat diam, quis tempor est. Maecenas nunc leo, consectetur sit amet scelerisque suscipit, varius sed elit. In maximus nulla tortor, sit amet ultricies lectus fermentum quis. Mauris tristique suscipit nibh in condimentum. Aliquam at justo molestie, bibendum ex quis, porta risus. Donec lacinia est eros, et pellentesque arcu dictum quis. Aliquam ac fermentum nisl. Morbi vel tortor non tellus porttitor vulputate nec ut leo. Aliquam a maximus arcu. Nunc cursus augue ante, pulvinar laoreet tortor vulputate ac. Nunc pharetra, lectus vel facilisis laoreet, dui odio imperdiet lorem, nec porta risus nibh nec orci.
