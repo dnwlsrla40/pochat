@@ -1,7 +1,7 @@
 package com.woojin.pochat.domain.post;
 
 import com.woojin.pochat.domain.BaseTimeEntity;
-import com.woojin.pochat.domain.member.Member;
+import com.woojin.pochat.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,14 +39,14 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
     @Builder
-    public Post(String title, String body, String url, Boolean isPrivate, Member member) {
+    public Post(String title, String body, String url, Boolean isPrivate, User user) {
         this.title = title;
         this.body = body;
         this.url = url;
         this.isPrivate = isPrivate;
-        this.member = member;
+        this.user = user;
     }
 }

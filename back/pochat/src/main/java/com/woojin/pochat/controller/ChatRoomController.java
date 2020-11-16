@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 @RestController
@@ -17,6 +19,10 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     
     // 채팅 리스트 화면(후에 자신이 만든 채팅창만 보이게 변경)
+    @RequestMapping("/chatroomlist")
+    public List<ChatRoom> getCharRoomList(){
+        return chatRoomService.getChatRoomList();
+    }
     
     // 채팅방 생성(친구중에서 초대하는 방식)
     public ChatRoom create(@RequestBody ChatRoomDto.ChatRoomCreateRequestDto requestDto){

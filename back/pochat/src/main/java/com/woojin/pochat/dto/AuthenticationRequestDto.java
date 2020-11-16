@@ -1,9 +1,9 @@
-package com.woojin.pochat.dto;
-
-import lombok.Data;
-
-@Data
-public class AuthenticationRequestDto {
-    private String username;
-    private String password;
-}
+//package com.woojin.pochat.dto;
+//
+//import lombok.Data;
+//
+//@Data
+//public class AuthenticationRequestDto {
+//    private String username;
+//    private String password;
+//}
