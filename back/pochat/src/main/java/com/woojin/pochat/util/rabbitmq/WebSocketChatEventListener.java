@@ -27,7 +27,7 @@ public class WebSocketChatEventListener {
         if(username != null){
             WebSocketChatMessage chatMessage = new WebSocketChatMessage();
             chatMessage.setType("Leave");
-            chatMessage.setSender(username);
+            chatMessage.setUsername(username);
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
         }
