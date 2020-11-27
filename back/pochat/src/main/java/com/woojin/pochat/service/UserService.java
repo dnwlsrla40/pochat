@@ -53,6 +53,13 @@ public class UserService {
     public User signin(UserDto.UserCreateRequestDto requestDto){
         String password = Hashing.hashingPassword(requestDto.getPassword());
         User loginUser  = userRepository.findByUsernameAndPassword(requestDto.getUsername(), password);
+        System.out.println("loginUser:" + loginUser);
         return loginUser;
+    }
+
+    @Transactional
+    public User getUserInfo(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(IllegalAccessError::new);
+        return user;
     }
 }

@@ -12,13 +12,19 @@ import java.util.Arrays;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    private static final String[] EXCLUDE_PATHS = {
+            "/login/**",
+            "/signup/**",
+            "/error/**"
+    };
+
     @Autowired
     private JwtInterceptor jwtInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(jwtInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(Arrays.asList("/login","/signup"));
+                .excludePathPatterns(EXCLUDE_PATHS);
     }
 
     @Override

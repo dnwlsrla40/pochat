@@ -1,7 +1,6 @@
 package com.woojin.pochat.domain.user;
 
 import com.woojin.pochat.domain.BaseTimeEntity;
-import com.woojin.pochat.domain.follow.Follow;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,10 +22,6 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String password;
-
-    @OneToMany(mappedBy = "follow_id")
-    private List<Follow> follow;
-
 
     @Builder
     public User(String username, String password){

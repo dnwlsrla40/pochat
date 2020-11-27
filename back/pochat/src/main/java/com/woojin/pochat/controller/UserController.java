@@ -47,6 +47,7 @@ public class UserController {
 
         try{
             User loginUser = userService.signin(requestDto);
+            System.out.println("controller loginUser: " + loginUser);
             String token = jwtService.create(loginUser);
 
             res.setHeader("jwt-auth-token",token);
@@ -62,4 +63,9 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/user/{username}")
+    public User getUserInfo(@PathVariable(name = "username") String username){
+        return userService.getUserInfo(username);
+    }
 }

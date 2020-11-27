@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @Slf4j
 public class JwtInterceptor implements HandlerInterceptor {
+    private static final String HEADER_AUTH = "jwt-auth-token";
+
     @Autowired
     private JwtService jwtService;
 
@@ -22,8 +24,9 @@ public class JwtInterceptor implements HandlerInterceptor {
         if(req.getMethod().equals("OPTIONS")) {
             return true;
         } else{
-            // req의 헤더에 token 찾기
-            String token = req.getHeader("jwt-auth-token");
+            // req의 헤더에 token 찾기;
+            String token = req.getHeader(HEADER_AUTH);
+            System.out.println("token:" + token);
             if(token != null && token.length() > 0){
                 // 유효성 겁사
                 jwtService.checkValid(token);
