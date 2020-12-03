@@ -4,10 +4,10 @@
     <chat-list class="col-2" style="min-width : 317px !important;" />
 
     <div class="col" style="min-width : 720px !important;">
-      <router-view />
+      <router-view @create="onCreate" />
     </div>
     
-    <post-list class="col-2" style="min-width : 317px !important;" />
+    <post-list ref="postlist" class="col-2" style="min-width : 317px !important;" />
     
   </q-page>
 </template>
@@ -23,6 +23,11 @@ export default {
   data () {
     return {
       postingMode : true
+    }
+  },
+  methods : {
+    onCreate : function () {
+      this.$refs.postlist.connect();
     }
   }
 }

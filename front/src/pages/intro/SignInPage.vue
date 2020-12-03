@@ -8,17 +8,16 @@
         <q-card>
           <q-form>
             <q-card-section>
-              <q-input label="username" />
-              <q-input label="password" type="password" />
+              <q-input label="username" v-model.trim="username"/>
+              <q-input label="password" type="password" v-model.trim="password"/>
             </q-card-section>
+
+            <q-dialog variant="danger" v-model="showAlert">{{ errMsg }}</q-dialog>
 
             <q-card-section class="flex justify-center q-gutter-x-md">
-              <q-btn label="signUp" color="purple-3" />
-              <q-btn label="login" color="primary" to="main" />
+              <q-btn label="signUp" color="purple-3" @click="signup"/>
+              <q-btn label="login" color="primary" @click="tryLogin"/>
             </q-card-section>
-
-            <!-- 지워 -->
-            <div class="text-center">컬러 맘에 안들면 바꿔줄게</div>
 
           </q-form>
         </q-card>
@@ -28,7 +27,86 @@
 </template>
 
 <script>
+
+const storage = window.sessionStorage;
+
 export default {
-  name: 'SignInPage'
+  name: 'SignInPage',
+   data: function () {
+        return {
+            username: '',
+            password: '',
+            showAlert: false,
+            errMsg: '',
+        }
+    },
+    methods: {
+        signup: function() {
+            if ( this.username == '' ) {
+                this.showAlert = true;
+                this.errMsg = 'Please enter your username';
+                return;
+            }
+            if ( this.password == '' ) {
+                this.showAlert = true;
+                this.errMsg = 'Please enter the password';
+                return;
+            }
+            this.showAlert = false;
+            this.$axios.post(
+                'http://localhost:8080/signup',
+                {
+                    username: this.username,
+                    password: this.password
+                },
+                {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-Type': 'application/json'
+                    }
+                }
+            ).then((res) => {
+                console.log(res.data);
+            }).catch((e) => {
+                console.error(e);
+            });
+        },
+        tryLogin: function() {
+            storage.setItem("jwt-auth-token", "");
+            storage.setItem("lgoin_user", "");
+
+            if ( this.username == '' ) {
+                this.showAlert = true;
+                this.errMsg = 'Please enter your username';
+                return;
+            }
+            if ( this.password == '' ) {
+                this.showAlert = true;
+                this.errMsg = 'Please enter the password';
+                return;
+            }
+            this.showAlert = false;
+
+            this.$axios.post('http://localhost:8080/login',
+            {
+                username : this.username,
+                password : this.password
+            },
+            {
+                headers : {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                }
+            }).then((res) => {
+                if(res.data.status){
+                    storage.setItem("jwt-auth-token", res.headers["jwt-auth-token"]);
+                    storage.setItem("login_user", res.data.data.username);
+                    this.$router.push('/main');
+                }
+            }).catch((e) => {
+                console.error(e);
+            })
+        }
+    }
 }
 </script>
