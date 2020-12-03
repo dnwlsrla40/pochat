@@ -13,7 +13,7 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ChatType type;
 
@@ -22,9 +22,9 @@ public class Chat {
     private String roomId;
 
     // 후에 Member의 id로 변경 (Memeber memberId)
-    @Column(length = 100)
+    @Column(length = 100, nullable = false, unique = true)
     private String sender;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
 }

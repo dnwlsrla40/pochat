@@ -66,6 +66,7 @@ public class UserController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/user/{username}")
     public User getUserInfo(@PathVariable(name = "username") String username){
+
         return userService.getUserInfo(username);
     }
 }

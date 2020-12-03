@@ -57,7 +57,7 @@ public class JwtService {
     /*
         jwt 토큰을 분석해서 필요한 정보를 반환한다.
      */
-    public Map<String, Object> get(final String key){
+    public Map<String, Object> get(){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String jwt = request.getHeader(HEADER_AUTH);
         Jws<Claims> claims = null;
@@ -68,10 +68,8 @@ public class JwtService {
         }catch (final Exception e){
             throw new RuntimeException();
         }
-        @SuppressWarnings("unchecked")
-        Map<String, Object> value = (LinkedHashMap<String, Object>)claims.getBody().get(key);
-        log.trace("claims: {}", value);
-        return value;
+        log.trace("claims: {}", claims);
+        return claims.getBody();
     }
 
 }
