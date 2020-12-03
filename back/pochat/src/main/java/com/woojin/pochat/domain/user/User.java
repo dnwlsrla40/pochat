@@ -1,12 +1,14 @@
 package com.woojin.pochat.domain.user;
 
 import com.woojin.pochat.domain.BaseTimeEntity;
+import com.woojin.pochat.domain.friend.Friend;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @Data

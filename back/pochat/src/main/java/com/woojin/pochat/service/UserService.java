@@ -37,17 +37,29 @@ public class UserService {
         return "success";
     }
 
-    @Transactional
-    public void Login (UserDto.UserCreateRequestDto requestDto, HttpServletResponse res) {
-        String password = Hashing.hashingPassword(requestDto.getPassword());
-        Optional<User> user  = userRepository.findByUsernameAndPassword(requestDto.getUsername(), password);
-        System.out.println(user.get().getUsername());
-        if(!user.isEmpty()){
-            Cookie cookie = new Cookie("username", user.get().getUsername());
-            cookie.setMaxAge(3600);
-            cookie.setPath("/");
+//    @Transactional
+//    public void Login (UserDto.UserCreateRequestDto requestDto, HttpServletResponse res) {
+//        String password = Hashing.hashingPassword(requestDto.getPassword());
+//        Optional<User> user  = userRepository.findByUsernameAndPassword(requestDto.getUsername(), password);
+//        System.out.println(user.get().getUsername());
+//        if(!user.isEmpty()){
+//            Cookie cookie = new Cookie("username", user.get().getUsername());
+//            cookie.setMaxAge(3600);
+//            res.addCookie(cookie);
+//        }
+//    }
 
-            res.addCookie(cookie);
-        }
+    @Transactional
+    public User signin(UserDto.UserCreateRequestDto requestDto){
+        String password = Hashing.hashingPassword(requestDto.getPassword());
+        User loginUser  = userRepository.findByUsernameAndPassword(requestDto.getUsername(), password);
+        System.out.println("loginUser:" + loginUser);
+        return loginUser;
+    }
+
+    @Transactional
+    public User getUserInfo(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(IllegalAccessError::new);
+        return user;
     }
 }
