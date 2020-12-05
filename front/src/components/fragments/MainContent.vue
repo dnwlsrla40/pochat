@@ -32,7 +32,7 @@ export default {
   name: 'MainContent',
   data () {
     return {
-      splitter : 32
+      splitter : 50
     }
   },
 

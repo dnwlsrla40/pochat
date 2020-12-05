@@ -17,11 +17,15 @@ const routes = [
         component: () => import('pages/main/MainPage.vue'),
         children : [
           {
-            path : '',
+            path : 'content',
             component: () => import('components/fragments/MainContent.vue')
           },
           {
-            path : 'post',
+            path : 'content/:id',
+            component: () => import('components/fragments/MainContent.vue')
+          },
+          {
+            path : 'post/editor',
             component: () => import('components/fragments/PostEditor.vue')
           },
         ]

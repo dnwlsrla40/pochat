@@ -3,7 +3,10 @@ import VueRouter from 'vue-router'
 
 import routes from './routes'
 
+import axios from 'axios'
+
 Vue.use(VueRouter)
+Vue.prototype.$axios = axios
 
 /*
  * If not building with SSR mode, you can

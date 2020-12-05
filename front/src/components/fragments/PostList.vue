@@ -3,10 +3,10 @@
 
     <q-card-section class="bg-deep-purple-1">
       <div class="flex justify-between items-center">
-        <span class="text-h6">포스트 목록</span>
+        <span class="text-h6">{{list_name}} 목록</span>
         <div class="q-gutter-x-sm">
-          <q-btn size="sm" color="primary" label="추가" to="/main/post" />
-          <q-btn size="sm" color="primary" label="즐겨찾기" />
+          <q-btn size="sm" color="primary" label="추가" to="/main/post/editor" />
+          <q-btn size="sm" color="primary" label="즐겨찾기" @click="getFavoriteList"/>
         </div>
       </div>
     </q-card-section>
@@ -17,15 +17,10 @@
 
       <q-list class="scroll" style="height : calc(100vh - 155px);">
 
-        <q-item clickable v-ripple v-for="(number, index) in 10" :key="`post-${index}`" :active="active === index" @click="active = index;"  active-class="active">
+        <q-item clickable v-ripple v-for="(item, index) in postList" :key="`post-${index}`" :active="active === item.post_id" @click="getPostDetail(item)"  active-class="active">
           <q-item-section>
-            <q-item-label>포스트</q-item-label>
-            <q-item-label caption lines="2">Secondary line text. Lorem ipsum dolor sit amet, consectetur adipiscit elit.</q-item-label>
-          </q-item-section>
-
-          <q-item-section side top>
-            <q-item-label caption>5 min ago</q-item-label>
-            <q-icon v-if="index % 2 == 0" name="star" color="yellow" />
+            <q-item-label>{{item.title}}</q-item-label>
+            <q-item-label caption lines="2">{{item.short_description}}</q-item-label>
           </q-item-section>
         </q-item>
         
@@ -35,12 +30,85 @@
 </template>
 
 <script>
+
+const storage = window.sessionStorage;
+const token = storage.getItem("jwt-auth-token");
+const login_user = storage.getItem("login_user");
+
 export default {
   name: 'PostList',
   data () {
     return {
-      active : -1
+      active : -1,
+      postList: [],
+      post_id: '',
+      list_name: '',
     }
-  }
+  },
+  created(){
+        if(token != null && token.length > 0){
+            this.connect();
+        } else {
+            this.$router.push('/login');
+        }
+    },
+    methods: {
+        connect: function() {
+            this.$axios.get('http://localhost:8080/post/list',{
+                headers:{
+                    "jwt-auth-token": storage.getItem("jwt-auth-token")
+                }
+            })
+            .then((res) => {
+                if(res.data.status){
+                    this.list_name = "포스트"
+                    this.postList = new Array;
+                    for(var i=0; i<res.data.data.length; i++){
+                        this.postList.push(
+                            {
+                                title: res.data.data[i].title,
+                                short_description: res.data.data[i].shortDescription,
+                                post_id: res.data.data[i].id
+                            }
+                        );
+                    }
+                }
+            }).catch((e) => {
+                console.error(e);
+            })
+        },
+        getPostDetail: function(item){
+            console.log(item);
+            this.active = item.post_id;
+            this.$router.push(
+              {
+                path: `/main/content/${item.post_id}`,
+              }
+            );
+        },
+        getFavoriteList: function() {
+            this.$axios.get('http://localhost:8080/post/favorite',{
+                headers:{
+                    "jwt-auth-token": storage.getItem("jwt-auth-token")
+                },
+            })
+            .then((res) => {
+                if(res.data.status){
+                  this.list_name = "즐겨찾기"
+                    this.postList = new Array;
+                    for(var i=0; i<res.data.data.length; i++){
+                        this.postList.push(
+                            {
+                                title: res.data.data[i].title,
+                                short_description: res.data.data[i].shortDescription,
+                            }
+                        );
+                    }
+                }
+            }).catch((e) => {
+                console.error(e);
+            })
+        }
+    }
 }
 </script>

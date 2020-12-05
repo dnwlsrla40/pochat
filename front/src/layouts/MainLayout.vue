@@ -10,7 +10,7 @@
         <q-space  />
 
         <div class="q-gutter-x-sm">
-          <q-btn label="MYPAGE" color="primary" />
+          <q-btn label="MYPAGE" color="primary" to="/user"/>
           <q-btn label="LOGOUT" color="primary" to="/" />
         </div>
       </q-toolbar>
