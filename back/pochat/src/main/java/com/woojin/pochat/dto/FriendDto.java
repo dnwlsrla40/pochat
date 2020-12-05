@@ -19,4 +19,19 @@ public class FriendDto {
             this.recipientName = recipientName;
         }
     }
+
+    @NoArgsConstructor
+    @Data
+    public static class FriendAcceptRequestDto {
+        private String senderName;
+        private String recipientName;
+
+        public FriendAcceptRequestDto(String senderName, String recipientName) {
+            Assert.notNull(senderName, "senderName must be not null");
+            Assert.notNull(recipientName, "recipientName must be not null");
+
+            this.senderName = senderName;
+            this.recipientName = recipientName;
+        }
+    }
 }

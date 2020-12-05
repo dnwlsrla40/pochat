@@ -51,11 +51,22 @@ public class FriendService {
     }
 
     /*
-        method function
-         - friend 신청 목록 제공
-     */
+    method function
+     - friend 수락
+    */
     @Transactional
-    public List<Friend> getFriendList() {
+    public Friend friendAccept(FriendDto.FriendAcceptRequestDto requestDto) {
+
+        Friend friend = friendRepository.findAllBySenderNameAndRecipientName(requestDto.getSenderName(), requestDto.getRecipientName());
+        friend.setIsAccept(true);
+        return friend;
+    }
+
+    /*
+        method function
+         - friend 신청 넣은 목록
+     */
+    public List<Friend> getFriendSendList() {
         // 접속중인 username 가져오기
         Map map = (Map)jwtService.get().get("User");
         String username = (String)map.get("username");
@@ -65,9 +76,25 @@ public class FriendService {
         return friendRepository.findAllBySenderName(loginUser);
     }
 
+
     /*
         method function
-         - friend 수락한 목록 제공
+         - friend 신청 온 목록(수락하진 않음)
+     */
+    @Transactional
+    public List<Friend> getFriendRequestList() {
+        // 접속중인 username 가져오기
+        Map map = (Map)jwtService.get().get("User");
+        String username = (String)map.get("username");
+
+        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+
+        return friendRepository.findAllbyRecipientAndIsAccept(loginUser);
+    }
+
+    /*
+        method function
+         - friend 완료된 목록
      */
     @Transactional
     public List<Friend> getFriendAcceptList() {
@@ -77,6 +104,6 @@ public class FriendService {
 
         User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
 
-        return friendRepository.findAllbySenderNameAndIsAccept(loginUser);
+        return friendRepository.findAllbyNameAndIsAccept(loginUser);
     }
 }

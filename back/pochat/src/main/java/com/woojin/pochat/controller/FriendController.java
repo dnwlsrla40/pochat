@@ -62,18 +62,17 @@ public class FriendController {
 
     /*
         method
-         - friend 조회
+         - friend 수락
      */
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/friend/list")
-    public ResponseEntity<Map<String, Object>> getFriendList() {
+    @PostMapping("/friend/accept")
+    public ResponseEntity<Map<String, Object>> friendAccept(@RequestBody FriendDto.FriendAcceptRequestDto requestDto) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{
-            List<Friend> friendList = friendService.getFriendList();
+            Friend acceptFriend = friendService.friendAccept(requestDto);
             resultMap.put("status", true);
-            resultMap.put("data", friendList);
-            // 요청 성공 + 새로운 리소스 생성
+            resultMap.put("data", acceptFriend);
             status = HttpStatus.OK;
         } catch(RuntimeException e) {
             log.error("", e);
@@ -83,26 +82,71 @@ public class FriendController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-//    /*
-//        method
-//         - friend 수락한 조회
-//     */
-//    @CrossOrigin(origins = "*", allowedHeaders = "*")
-//    @GetMapping("/friend/list")
-//    public ResponseEntity<Map<String, Object>> getFriendAcceptList() {
-//        Map<String, Object> resultMap = new HashMap<>();
-//        HttpStatus status = null;
-//        try{
-//            List<Friend> friendList = friendService.getFriendList();
-//            resultMap.put("status", true);
-//            resultMap.put("data", friendList);
-//            // 요청 성공 + 새로운 리소스 생성
-//            status = HttpStatus.OK;
-//        } catch(RuntimeException e) {
-//            log.error("", e);
-//            resultMap.put("message", e.getMessage());
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        }
-//        return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//    }
+    /*
+        method
+         - friend 신청 목록
+         - 내가 신청 넣은 것
+     */
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/friend/send/list")
+    public ResponseEntity<Map<String, Object>> getFriendSendList() {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            List<Friend> friendSendList = friendService.getFriendSendList();
+            resultMap.put("status", true);
+            resultMap.put("data", friendSendList);
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+        method
+         - friend 신청 받은 목록(아직 수락 안함)
+         - 내가 신청 받은거
+     */
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/friend/request/list")
+    public ResponseEntity<Map<String, Object>> friendRequestList() {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            List<Friend> friendRequestList = friendService.getFriendRequestList();
+            resultMap.put("status", true);
+            resultMap.put("data", friendRequestList);
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+        method
+         - friend 수락한 조회
+     */
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/friend/accept")
+    public ResponseEntity<Map<String, Object>> getFriendAcceptList() {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            List<Friend> acceptFriendList = friendService.getFriendAcceptList();
+            resultMap.put("status", true);
+            resultMap.put("data", acceptFriendList);
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
 }
