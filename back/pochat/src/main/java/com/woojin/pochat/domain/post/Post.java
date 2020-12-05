@@ -56,9 +56,7 @@ public class Post extends BaseTimeEntity {
         Assert.notNull(shortDescription, "shortDescription must be not null");
         Assert.notNull(url, "url must be not null");
         Assert.notNull(isPrivate, "isPrivate must be not null");
-        Assert.notNull(favorite, "favorite must be not null");
         Assert.notNull(user, "user must be not null");
-
 
         this.title = title;
         this.body = body;

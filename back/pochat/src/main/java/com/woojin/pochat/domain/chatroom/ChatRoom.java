@@ -23,6 +23,7 @@ public class ChatRoom {
     private String name;
 
     @OneToMany
+    @JoinColumn(name = "user_id")
     private List<User> roomMember;
 
     @Builder

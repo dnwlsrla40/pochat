@@ -25,7 +25,7 @@ public class UserService {
 
         if(username.equals("") || password.equals(""))
             return "failed";
-        if(userRepository.findByUsername(username) != null)
+        if(!userRepository.findByUsername(username).isEmpty())
             return "failed";
 
         User user = User.builder()
