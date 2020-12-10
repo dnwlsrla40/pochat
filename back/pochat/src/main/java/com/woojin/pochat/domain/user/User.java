@@ -1,14 +1,13 @@
 package com.woojin.pochat.domain.user;
 
 import com.woojin.pochat.domain.BaseTimeEntity;
-import com.woojin.pochat.domain.friend.Friend;
+import com.woojin.pochat.domain.chatroom.ChatRoom;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
-import java.util.List;
 
 @NoArgsConstructor
 @Data
@@ -23,6 +22,14 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    private String thumbnail;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
 
     @Builder
     public User(String username, String password){

@@ -46,6 +46,11 @@ dependencies {
 	compile 'io.springfox:springfox-swagger2:2.5.0'
 	compile 'io.springfox:springfox-swagger-ui:2.5.0'
 
+	// thumbnail 관련
+	compile('org.imgscalr:imgscalr-lib:4.2')
+	// file upload 관련
+	compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'

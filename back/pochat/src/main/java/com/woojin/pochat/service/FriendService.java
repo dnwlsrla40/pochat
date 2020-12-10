@@ -34,6 +34,7 @@ public class FriendService {
      */
     @Transactional
     public Friend addFriend(FriendDto.FriendCreateRequestDto requestDto) {
+
         // 접속중인 username 가져오기
         Map map = (Map)jwtService.get().get("User");
         String username = (String)map.get("username");
@@ -46,6 +47,13 @@ public class FriendService {
                 .sender(sender)
                 .recipient(recipient)
                 .build();
+
+        if(sender.equals(recipient)){
+            return null;
+        }
+        if(friendRepository.existsBySenderAndRecipient(sender, recipient)){
+            return null;
+        }
 
         return friendRepository.save(friend);
     }

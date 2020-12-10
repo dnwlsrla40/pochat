@@ -14,18 +14,13 @@ public class ChatRoomDto {
     @Data
     public static class ChatRoomCreateRequestDto {
         private String name;
-        private List<User> roomMember;
+        private List<String> roomMember;
 
         @Builder
-        public ChatRoomCreateRequestDto(String name, List<User> roomMember){
+        public ChatRoomCreateRequestDto(String name, List<String> roomMember){
             this.name = name;
+            System.out.println("roomMember: " + roomMember);
             this.roomMember = roomMember;
-        }
-
-        public ChatRoom toEntity(){
-            return ChatRoom.builder()
-                    .name(this.name)
-                    .build();
         }
     }
 }

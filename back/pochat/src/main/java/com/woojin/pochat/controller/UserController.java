@@ -3,16 +3,27 @@ package com.woojin.pochat.controller;
 import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.dto.UserDto;
 import com.woojin.pochat.service.UserService;
+import com.woojin.pochat.util.UploadThumbnailUtils;
 import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +36,9 @@ public class UserController {
     private JwtService jwtService;
 
     private final UserService userService;
+
+    @Value("${resources.location}")
+    private String thumbnailPath;
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/signup")
@@ -68,5 +82,22 @@ public class UserController {
     public User getUserInfo(@PathVariable(name = "username") String username){
 
         return userService.getUserInfo(username);
+    }
+
+    // thumbnail 업로드
+    @PostMapping("/thumbnail")
+    public String uploadThumbnail(@RequestPart("file") MultipartFile file) throws Exception{
+        return UploadThumbnailUtils.fileUpload(thumbnailPath, file.getOriginalFilename(), file.getBytes());
+    }
+
+    // thumbnail 업로드 test용
+    @GetMapping("/download")
+    public ResponseEntity<Resource> fileDownload() throws IOException {
+        Path path = Paths.get("C:/Users/PC/Desktop/resource/2020/10/13/s_8b183090-af00-46a7-a58e-841b892f4d91_test.PNG");
+        Resource resource = new InputStreamResource(Files.newInputStream(path));
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "test" + "\"")
+                .body(resource);
     }
 }

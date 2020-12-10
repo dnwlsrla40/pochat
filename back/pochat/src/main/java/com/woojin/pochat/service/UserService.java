@@ -18,6 +18,9 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
+    @Value("${resources.location}")
+    private String thumbnailPath;
+
     @Transactional
     public String signUp(UserDto.UserCreateRequestDto requestDto){
         String username = requestDto.getUsername();

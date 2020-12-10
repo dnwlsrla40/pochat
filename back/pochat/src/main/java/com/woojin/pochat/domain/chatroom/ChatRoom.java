@@ -22,15 +22,16 @@ public class ChatRoom {
     @Column(length = 100)
     private String name;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<User> roomMember;
 
     @Builder
-    public ChatRoom(String name){
+    public ChatRoom(String name, List<User> roomMember){
 
         Assert.notNull(name, "name must be not null");
-
+        Assert.notNull(roomMember, "roomMember must be not null");
         this.name = name;
+        this.roomMember = roomMember;
     }
 }
