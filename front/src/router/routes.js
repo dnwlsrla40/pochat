@@ -27,8 +27,18 @@ const routes = [
           {
             path : 'post/editor',
             component: () => import('components/fragments/PostEditor.vue')
-          },
+          }
         ]
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path : '',
+        component: () => import('pages/UserPage.vue')
       }
     ]
   },

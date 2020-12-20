@@ -1,8 +1,11 @@
 <template>
   <q-card class="bg-grey-2">
 
-    <q-card-section class="bg-deep-purple-1">
-      <span class="text-h6">채팅 목록</span>
+    <q-card-section class="bg-deep-purple-1 flex">
+      <div class="text-h6">채팅 목록</div>
+      <q-space />
+      <q-btn icon="add" flat @click="onNewChat" />
+      <new-chat-dialog :show="dialog" @submit="onSubmit" @cancel="onCancel" />
     </q-card-section>
 
     <q-separator />
@@ -24,12 +27,28 @@
 </template>
 
 <script>
+import NewChatDialog from '../dialog/NewChatDialog.vue';
 export default {
   name: 'ChatList',
+  components : {NewChatDialog},
   data () {
     return {
-      active : -1
+      active : -1,
+      dialog : false
     }
+  },
+  methods : {
+    onNewChat : function () {
+      this.dialog = true;
+    },
+    onSubmit : function (payload) {
+      console.log(payload)
+      this.dialog = false;
+    },
+    onCancel : function () {
+      this.dialog = false;
+    }
+
   }
 }
 </script>
