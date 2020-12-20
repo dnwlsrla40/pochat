@@ -7,6 +7,8 @@ import com.woojin.pochat.dto.FriendDto;
 import com.woojin.pochat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Queue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -56,8 +58,4 @@ public class ChatRoomController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
-    
-    // 특정 채팅방 조회
-
-    
 }

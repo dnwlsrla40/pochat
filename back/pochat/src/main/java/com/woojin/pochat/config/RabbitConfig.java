@@ -1,10 +1,8 @@
 package com.woojin.pochat.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -16,6 +14,8 @@ public class RabbitConfig {
     private static final String EXCHANGE_NAME = "cafe.topic";
     private static final String QUEUE_NAME = "coffee.queue";
     private static final String ROUTING_KEY = "order.coffee.#";
+
+    // private ConnectionFactory connectionFactory;
 
     @Bean
     Queue queue(){
@@ -35,6 +35,7 @@ public class RabbitConfig {
     @Bean
     RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter){
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        // this.connectionFactory = connectionFactory;
         rabbitTemplate.setMessageConverter(messageConverter);
         return rabbitTemplate;
     }
@@ -43,4 +44,9 @@ public class RabbitConfig {
     MessageConverter messageConverter(){
         return new Jackson2JsonMessageConverter();
     }
+
+//    @Bean
+//    RabbitAdmin rabbitAdmin() {
+//        return new RabbitAdmin(this.connectionFactory);
+//    }
 }

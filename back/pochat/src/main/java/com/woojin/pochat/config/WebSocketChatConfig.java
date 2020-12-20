@@ -1,15 +1,16 @@
 package com.woojin.pochat.config;
 
+import com.woojin.pochat.util.ChatWebSocketHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.*;
 
 // Stomp 사용
 @EnableWebSocketMessageBroker
 @Configuration
-public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
 //    private final WebSocketHandler webSocketHandler;
 
     // CORS 허용(도메인이 다른 서버에서도 접속 가능) 및 end point를 /ws/chat으로 설정
@@ -43,6 +44,16 @@ public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry){
         registry.addEndpoint("/websocketApp").setAllowedOrigins("*")
                 .withSockJS();
+    }
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(chatWebSocketHandler(), "/websocketApp").setAllowedOrigins("*").withSockJS();
+    }
+
+    @Bean
+    public WebSocketHandler chatWebSocketHandler(){
+        return new ChatWebSocketHandler();
     }
 }
 

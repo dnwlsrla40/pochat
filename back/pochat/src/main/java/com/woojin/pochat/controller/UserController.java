@@ -7,6 +7,10 @@ import com.woojin.pochat.util.UploadThumbnailUtils;
 import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -35,7 +39,12 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    // @Autowired
+    // private RabbitAdmin rabbitAdmin;
+
     private final UserService userService;
+
+    private AmqpAdmin amqpAdmin;
 
     @Value("${resources.location}")
     private String thumbnailPath;
@@ -56,8 +65,18 @@ public class UserController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto.UserCreateRequestDto requestDto, HttpServletResponse res){
+//        amqpAdmin.declareQueue(new Queue("test1", false));
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
+
+        CachingConnectionFactory cf = new CachingConnectionFactory("127.0.0.1", 5672);
+        cf.setUsername("guest");
+        cf.setPassword("guest");
+
+        RabbitAdmin admin = new RabbitAdmin(cf);
+        Queue queue = new Queue("test1Queue");
+        admin.declareQueue(queue);
+
 
         try{
             User loginUser = userService.signin(requestDto);
