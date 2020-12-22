@@ -21,7 +21,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         System.out.println(req.getMethod() + " :" + req.getServletPath());
 
         // option 요청은 바로 통과 ??
-        if(req.getMethod().equals("OPTIONS")) {
+        if(req.getMethod().equals("OPTIONS") || req.getServletPath().equals("/thumbnail")) {
             return true;
         } else{
             // req의 헤더에 token 찾기;

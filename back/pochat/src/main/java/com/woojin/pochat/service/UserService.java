@@ -4,6 +4,7 @@ import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.domain.user.UserRepository;
 import com.woojin.pochat.dto.UserDto;
 import com.woojin.pochat.util.Hashing;
+import com.woojin.pochat.util.UploadThumbnailUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class UserService {
         User user = User.builder()
                 .username(username)
                 .password(password)
+                .thumbnail(requestDto.getThumbnail())
                 .build();
 
         userRepository.save(user);

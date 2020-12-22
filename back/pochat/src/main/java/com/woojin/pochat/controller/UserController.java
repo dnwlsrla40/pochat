@@ -112,7 +112,7 @@ public class UserController {
     // thumbnail 업로드 test용
     @GetMapping("/download")
     public ResponseEntity<Resource> fileDownload() throws IOException {
-        Path path = Paths.get("C:/Users/PC/Desktop/resource/2020/10/13/s_8b183090-af00-46a7-a58e-841b892f4d91_test.PNG");
+        Path path = Paths.get("");
         Resource resource = new InputStreamResource(Files.newInputStream(path));
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))

@@ -32,13 +32,15 @@ public class User extends BaseTimeEntity {
     private ChatRoom chatRoom;
 
     @Builder
-    public User(String username, String password){
+    public User(String username, String password, String thumbnail){
 
         Assert.notNull(username, "username must be not null");
         Assert.notNull(password, "password must be not null");
+        Assert.notNull(thumbnail, "thubnail must be not null");
 
         this.username = username;
         this.password = password;
+        this.thumbnail = thumbnail;
     }
 
     @Override

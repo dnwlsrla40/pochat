@@ -34,10 +34,10 @@ public class UploadThumbnailUtils {
         //파일을 저장
         FileCopyUtils.copy(fileData, target);
 
-        String thumbnailName = null;
-        thumbnailName = makeThumbnail(uploadPath, imgPath, newFileName);
+//        String thumbnailName = null;
+//        thumbnailName = makeThumbnail(uploadPath, imgPath, newFileName);
 
-        return thumbnailName;
+        return newFileName;
     }
 
     public static void readFile(String path){
@@ -75,14 +75,14 @@ public class UploadThumbnailUtils {
         }
     }
 
-    //썸네일 이미지 생성
-    private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
-        BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));
-        BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
-        String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
-        File newFile = new File(thumbnailName);
-        String formatName = fileName.substring(fileName.lastIndexOf(".")+1);
-        ImageIO.write(destImg, formatName.toUpperCase(), newFile);
-        return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/');
-    }
+//    //썸네일 이미지 생성
+//    private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
+//        BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));
+//        BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
+//        String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
+//        File newFile = new File(thumbnailName);
+//        String formatName = fileName.substring(fileName.lastIndexOf(".")+1);
+//        ImageIO.write(destImg, formatName.toUpperCase(), newFile);
+//        return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/');
+//    }
 }

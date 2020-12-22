@@ -10,11 +10,13 @@ public class UserDto {
     public static class UserCreateRequestDto {
         private String username;
         private String password;
+        private String thumbnail;
 
         public User toEntity(){
             return User.builder()
                     .username(this.username)
                     .password(this.password)
+                    .thumbnail(this.thumbnail)
                     .build();
         }
     }
