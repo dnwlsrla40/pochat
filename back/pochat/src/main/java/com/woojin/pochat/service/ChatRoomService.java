@@ -43,14 +43,14 @@ public class ChatRoomService {
 
     @Transactional
     public String create(ChatRoomDto.ChatRoomCreateRequestDto requestDto){
+        ChatRoom chatRoom = ChatRoom.builder()
+                .name(requestDto.getName())
+                .build();
         for (int i = 0; i < requestDto.getRoomMember().size(); i++) {
             System.out.println(requestDto.getRoomMember().get(i));
-            User roomMember = userRepository.findByUsername(requestDto.getRoomMember().get(i)).orElseThrow(NoSuchElementException::new);
-            ChatRoom chatRoom = ChatRoom.builder()
-                    .name(requestDto.getName())
-                    .build();
+            User Member = userRepository.findByUsername(requestDto.getRoomMember().get(i)).orElseThrow(NoSuchElementException::new);
             ChatRoomMember chatRoomMember = ChatRoomMember.builder()
-                    .user(roomMember)
+                    .user(Member)
                     .chatRoom(chatRoom)
                     .build();
             chatRoomMemberRepository.save(chatRoomMember);

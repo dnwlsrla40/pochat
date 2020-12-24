@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLInsert;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -19,7 +20,7 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, unique = true)
+    @Column(length = 100)
     private String name;
 
     @Builder
