@@ -1,4 +1,4 @@
-package com.woojin.pochat.domain.chatroom;
+package com.woojin.pochat.domain.chatroommember;
 
 import com.woojin.pochat.domain.chatroom.ChatRoom;
 import com.woojin.pochat.domain.user.User;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMember, Long> {
 
-    List<ChatRoom> findChatRoomByName(String name);
-
+    @Query("select crm.chatRoom From ChatRoomMember as crm where crm.user=?1")
+    List<ChatRoom> getChatRoomByUser(User user);
 }

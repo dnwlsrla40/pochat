@@ -24,9 +24,9 @@ import java.util.Map;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
-    
+
     // 채팅 리스트 화면(후에 자신이 만든 채팅창만 보이게 변경)
-    @RequestMapping("/chatroom/list")
+    @GetMapping("/chatroom/list")
     public List<ChatRoom> getCharRoomList(){
         return chatRoomService.getChatRoomList();
     }
@@ -46,9 +46,9 @@ public class ChatRoomController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{
-            ChatRoom createdRoom= chatRoomService.create(requestDto);
+            String string = chatRoomService.create(requestDto);
             resultMap.put("status", true);
-            resultMap.put("data", createdRoom);
+            resultMap.put("data", string);
             // 요청 성공 + 새로운 리소스 생성
             status = HttpStatus.CREATED;
         } catch(RuntimeException e) {

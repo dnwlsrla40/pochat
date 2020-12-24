@@ -19,19 +19,14 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private List<User> roomMember;
-
     @Builder
-    public ChatRoom(String name, List<User> roomMember){
+    public ChatRoom(String name){
 
         Assert.notNull(name, "name must be not null");
-        Assert.notNull(roomMember, "roomMember must be not null");
+
         this.name = name;
-        this.roomMember = roomMember;
     }
 }

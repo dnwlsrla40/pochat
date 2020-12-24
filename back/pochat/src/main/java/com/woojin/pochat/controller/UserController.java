@@ -7,12 +7,14 @@ import com.woojin.pochat.util.UploadThumbnailUtils;
 import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -112,11 +115,13 @@ public class UserController {
     // thumbnail 업로드 test용
     @GetMapping("/download")
     public ResponseEntity<Resource> fileDownload() throws IOException {
-        Path path = Paths.get("");
-        Resource resource = new InputStreamResource(Files.newInputStream(path));
+        Path path = Paths.get("C:/Users/USER/Desktop/resource/2020/12/23/43f8e41c-2186-4e20-9179-b9322058ab24_KakaoTalk_20201115_183320402.png");
+        InputStreamResource resource = new InputStreamResource(Files.newInputStream(path));
+
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "test" + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "KakaoTalk_20201115_183320402" + "\"")
                 .body(resource);
+//        return new ResponseEntity<String>("C:/Users/USER/Desktop/resource/2020/12/23/43f8e41c-2186-4e20-9179-b9322058ab24_KakaoTalk_20201115_183320402.png", HttpStatus.OK);
     }
 }

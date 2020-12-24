@@ -2,15 +2,20 @@ package com.woojin.pochat.service;
 
 import com.woojin.pochat.domain.chatroom.ChatRoom;
 import com.woojin.pochat.domain.chatroom.ChatRoomRepository;
+import com.woojin.pochat.domain.chatroommember.ChatRoomMember;
+import com.woojin.pochat.domain.chatroommember.ChatRoomMemberRepository;
 import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.domain.user.UserRepository;
 import com.woojin.pochat.dto.ChatRoomDto;
+import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -18,26 +23,38 @@ import java.util.NoSuchElementException;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final UserRepository userRepository;
 
-    // index를 통해서 일정부분만 가져오는 것으로 변경 예정
+    @Autowired
+    private final JwtService jwtService;
+
+
     @Transactional
     public List<ChatRoom> getChatRoomList() {
-        return chatRoomRepository.findAll();
+        // 접속중인 username 가져오기
+        Map map = (Map)jwtService.get().get("User");
+        String username = (String)map.get("username");
+
+        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+
+        return chatRoomMemberRepository.getChatRoomByUser(loginUser);
     }
 
     @Transactional
-    public ChatRoom create(ChatRoomDto.ChatRoomCreateRequestDto requestDto){
-        List<User> roomMemberList = new ArrayList<>();
+    public String create(ChatRoomDto.ChatRoomCreateRequestDto requestDto){
         for (int i = 0; i < requestDto.getRoomMember().size(); i++) {
             System.out.println(requestDto.getRoomMember().get(i));
             User roomMember = userRepository.findByUsername(requestDto.getRoomMember().get(i)).orElseThrow(NoSuchElementException::new);
-            roomMemberList.add(roomMember);
+            ChatRoom chatRoom = ChatRoom.builder()
+                    .name(requestDto.getName())
+                    .build();
+            ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                    .user(roomMember)
+                    .chatRoom(chatRoom)
+                    .build();
+            chatRoomMemberRepository.save(chatRoomMember);
         }
-        ChatRoom chatRoom = ChatRoom.builder()
-                .name(requestDto.getName())
-                .roomMember(roomMemberList)
-                .build();
-        return chatRoomRepository.save(chatRoom);
+        return "success";
     }
 }

@@ -32,12 +32,15 @@ public class UploadThumbnailUtils {
         File target = new File(uploadPath + imgPath, newFileName);
 
         //파일을 저장
-        FileCopyUtils.copy(fileData, target);
+        FileCopyUtils.copy(fileData, target);;
+
+        imgPath = imgPath.replace("\\","/");
+        System.out.println("imgPath:" + imgPath);
 
 //        String thumbnailName = null;
 //        thumbnailName = makeThumbnail(uploadPath, imgPath, newFileName);
 
-        return newFileName;
+        return imgPath + "/" + newFileName;
     }
 
     public static void readFile(String path){

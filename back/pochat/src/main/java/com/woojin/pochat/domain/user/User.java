@@ -17,7 +17,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false, unique = true)
+    @Column(length = 100, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -27,16 +27,13 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "BLOB")
     private String thumbnail;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_room_id")
-    private ChatRoom chatRoom;
 
     @Builder
     public User(String username, String password, String thumbnail){
 
         Assert.notNull(username, "username must be not null");
         Assert.notNull(password, "password must be not null");
-        Assert.notNull(thumbnail, "thubnail must be not null");
+        Assert.notNull(thumbnail, "thumbnail must be not null");
 
         this.username = username;
         this.password = password;
