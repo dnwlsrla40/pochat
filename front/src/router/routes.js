@@ -16,13 +16,15 @@ const routes = [
         path: '',
         component: () => import('pages/main/MainPage.vue'),
         children : [
+          // {
+          //   path : 'content',
+          //   component: () => import('components/fragments/MainContent.vue')
+          // },
           {
-            path : 'content',
-            component: () => import('components/fragments/MainContent.vue')
-          },
-          {
-            path : 'content/:id',
-            component: () => import('components/fragments/MainContent.vue')
+            name : 'content',
+            path : 'content/:chatId/:postId',
+            component: () => import('components/fragments/MainContent.vue'),
+            //params : {chatId : -1, postId : -1}
           },
           {
             path : 'post/editor',

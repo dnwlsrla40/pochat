@@ -49,7 +49,7 @@ export default {
         if(token != null && token.length > 0){
             this.connect();
         } else {
-            this.$router.push('/login');
+            this.$router.push('/');
         }
     },
     methods: {
@@ -80,9 +80,16 @@ export default {
         getPostDetail: function(item){
             console.log(item);
             this.active = item.post_id;
+            const params = this.$route.params
+
+            if(!params.chatId) {
+              params.chatId = -1
+            }
+            params.postId = item.post_id
             this.$router.push(
               {
-                path: `/main/content/${item.post_id}`,
+                name : 'content',
+                params : params
               }
             );
         },

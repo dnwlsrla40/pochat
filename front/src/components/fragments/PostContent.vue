@@ -50,14 +50,19 @@ export default {
             body: '',
         }
     },
+    computed: {
+      postId : function () {
+        return this.$route.params.postId;
+      }
+    },
     watch: {
-        '$route': 'connect'
+        'postId': 'connect'
     },
     created(){
         if(token != null && token.length > 0){
             this.connect();
         } else {
-            this.$router.push('/login');
+            this.$router.push('/');
         }
     },
     methods: {

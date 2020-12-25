@@ -17,7 +17,6 @@
             <q-card-section class="flex justify-center q-gutter-x-md">
               <q-btn label="signUp" color="purple-3" @click="signup"/>
               <q-btn label="login" color="primary" @click="tryLogin"/>
-              <q-btn label="test" @click="$router.push('/main')"/>
             </q-card-section>
 
           </q-form>

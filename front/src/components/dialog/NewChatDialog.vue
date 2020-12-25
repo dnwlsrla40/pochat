@@ -5,26 +5,27 @@
         채팅방 생성
       </q-card-section>
       <q-card-section class="q-gutter-y-md">
-        <q-input label="채팅방 이름" />
+        <q-input label="채팅방 이름" v-model="chatRoomName"/>
 
         <q-scroll-area style="height : 280px;">
           <q-list class="scroll">
-            <q-item clickable v-ripple v-for="(number, index) in 10" :key="index">
+            <q-item clickable v-ripple v-for="(item, index) in friendList" :key="index">
               <q-item-section avatar>
                 <q-avatar>
                   <img src="https://cdn.entermedia.co.kr/news/photo/202010/21304_40107_5416.jpg"> 
                 </q-avatar>
               </q-item-section>
-              <q-item-section>테스형</q-item-section>
+              <q-item-section>{{item.friendName}}</q-item-section>
               <q-item-section class="items-end">
-                <q-checkbox :val="number" v-model="select" />
+                <q-checkbox :val="item.friendName" v-model="select" />
               </q-item-section>
             </q-item>
           </q-list>
         </q-scroll-area>
 
         <div class="q-gutter-x-xs">
-          <q-chip label="홍길동" removable v-for="item in select" :key="item" @remove="onRemove(item)" />
+          
+          <q-chip :label="item" removable v-for="item in select" :key="item.chatroom_id" @remove="onRemove(item)" />
         </div>
       </q-card-section>
       
@@ -38,12 +39,26 @@
 </template>
 
 <script>
+
+const storage = window.sessionStorage;
+const token = storage.getItem("jwt-auth-token");
+const login_user = storage.getItem("login_user");
+
 export default {
   name : "NewChatDialog",
   props : [ 'show' ],
   data () {
     return {
-      select : []
+      select : [],
+      friendList: [],
+      chatRoomName: ''
+    }
+  },
+  created(){
+    if(token != null && token.length > 0){
+        this.getAcceptedFriendList();
+    } else {
+        this.$router.push('/login');
     }
   },
   methods : {
@@ -52,11 +67,60 @@ export default {
       this.select.pop(val);
     },
     onSubmit : function () {
-      this.$emit('submit', {some : 'data'})
+      console.log("roomMember: " + JSON.stringify(this.select));
+      this.$axios.post('http://localhost:8080/chatroom',JSON.stringify(
+      {
+          name : this.chatRoomName,
+          roomMember : this.select
+      }),
+      {
+          headers:{
+              "jwt-auth-token": storage.getItem("jwt-auth-token"),
+              'Content-Type': 'application/json'
+          }
+      })
+      .then((res) => {
+          console.log(res.data.data)
+          res.data.data.chatroom_id = res.data.data.id
+          this.$emit('submit', res.data.data)
+      }).catch((e) => {
+          console.error(e)
+      })
     },
     onCancel : function () {
       this.$emit('cancel')
-    }
+    },
+    getAcceptedFriendList: function(){
+      this.$axios.get('http://localhost:8080/friend/accept',{
+          headers:{
+              "jwt-auth-token": storage.getItem("jwt-auth-token")
+          },
+      })
+      .then((res) => {
+          console.log(res.data.data);
+          if(res.data.status){
+              for(var i=0; i<res.data.data.length; i++){
+                  if(login_user == res.data.data[i].sender.username){
+                      this.friendList.push(
+                          {
+                              friendName: res.data.data[i].recipient.username,
+                              chatroom_id : res.data.data[i].id
+                          }
+                      )
+                  } else if(login_user == res.data.data[i].recipient.username){
+                      this.friendList.push(
+                          {
+                              friendName: res.data.data[i].sender.username,
+                              chatroom_id : res.data.data[i].id
+                          }
+                      )
+                  }
+              }
+          }
+      }).catch((e) => {
+          console.error(e);
+      })
+    },
 
   }
 }

@@ -13,7 +13,8 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
-    "quasar": "^1.0.0"
+    "quasar": "^1.0.0",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
