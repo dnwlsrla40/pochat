@@ -27,8 +27,21 @@ public class ChatRoomController {
 
     // 채팅 리스트 화면(후에 자신이 만든 채팅창만 보이게 변경)
     @GetMapping("/chatroom/list")
-    public List<ChatRoom> getCharRoomList(){
-        return chatRoomService.getChatRoomList();
+    public ResponseEntity<Map<String, Object>> getCharRoomList(){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            List<ChatRoom> chatRoomList= chatRoomService.getChatRoomList();
+            resultMap.put("status", true);
+            resultMap.put("data", chatRoomList);
+            // 요청 성공 + 새로운 리소스 생성
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
     /*
@@ -46,9 +59,9 @@ public class ChatRoomController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{
-            String string = chatRoomService.create(requestDto);
+            ChatRoom createdRoom = chatRoomService.create(requestDto);
             resultMap.put("status", true);
-            resultMap.put("data", string);
+            resultMap.put("data", createdRoom);
             // 요청 성공 + 새로운 리소스 생성
             status = HttpStatus.CREATED;
         } catch(RuntimeException e) {

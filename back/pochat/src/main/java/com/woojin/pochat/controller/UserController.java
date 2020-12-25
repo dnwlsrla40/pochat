@@ -7,30 +7,14 @@ import com.woojin.pochat.util.UploadThumbnailUtils;
 import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,12 +26,8 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
-    // @Autowired
-    // private RabbitAdmin rabbitAdmin;
-
     private final UserService userService;
 
-    private AmqpAdmin amqpAdmin;
 
     @Value("${resources.location}")
     private String thumbnailPath;
@@ -59,27 +39,12 @@ public class UserController {
     }
 
 
-//    @CrossOrigin(origins = "*", allowedHeaders = "*")
-//    @PostMapping("/login")
-//    public void Login(@RequestBody UserDto.UserCreateRequestDto requestDto, HttpServletResponse res){
-//        userService.Login(requestDto, res);
-//    }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto.UserCreateRequestDto requestDto, HttpServletResponse res){
-//        amqpAdmin.declareQueue(new Queue("test1", false));
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
-
-        CachingConnectionFactory cf = new CachingConnectionFactory("127.0.0.1", 5672);
-        cf.setUsername("guest");
-        cf.setPassword("guest");
-
-        RabbitAdmin admin = new RabbitAdmin(cf);
-        Queue queue = new Queue("test1Queue");
-        admin.declareQueue(queue);
-
 
         try{
             User loginUser = userService.signin(requestDto);
@@ -110,18 +75,5 @@ public class UserController {
     @PostMapping("/thumbnail")
     public String uploadThumbnail(@RequestPart("file") MultipartFile file) throws Exception{
         return UploadThumbnailUtils.fileUpload(thumbnailPath, file.getOriginalFilename(), file.getBytes());
-    }
-
-    // thumbnail 업로드 test용
-    @GetMapping("/download")
-    public ResponseEntity<Resource> fileDownload() throws IOException {
-        Path path = Paths.get("C:/Users/USER/Desktop/resource/2020/12/23/43f8e41c-2186-4e20-9179-b9322058ab24_KakaoTalk_20201115_183320402.png");
-        InputStreamResource resource = new InputStreamResource(Files.newInputStream(path));
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "KakaoTalk_20201115_183320402" + "\"")
-                .body(resource);
-//        return new ResponseEntity<String>("C:/Users/USER/Desktop/resource/2020/12/23/43f8e41c-2186-4e20-9179-b9322058ab24_KakaoTalk_20201115_183320402.png", HttpStatus.OK);
     }
 }
