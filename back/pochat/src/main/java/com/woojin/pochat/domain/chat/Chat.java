@@ -19,23 +19,20 @@ public class Chat extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 후에 chatroom의 id로 변경 (ChatRoom chatroomId)
     @Column(length = 100, nullable = false)
     private String chatRoom;
 
-    // 후에 Member의 id로 변경 (Memeber memberId)
     @Column(length = 100, nullable = false)
     private String sender;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
+    @Column(name = "sender_thumbnail", nullable = false)
+    private String senderThumbnail;
 
     @Builder
-    public Chat(String chatRoom, String sender, String message){
+    public Chat(String chatRoom, String sender, String message, String senderThumbnail){
 
         Assert.notNull(chatRoom, "chatRoom must be not null");
         Assert.notNull(sender, "sender must be not null");
@@ -44,5 +41,6 @@ public class Chat extends BaseTimeEntity {
         this.chatRoom = chatRoom;
         this.sender = sender;
         this.message = message;
+        this.senderThumbnail = senderThumbnail;
     }
 }

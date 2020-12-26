@@ -44,17 +44,16 @@ public class PostService {
 
         User writeUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
 
-        // url 중복 체크
-        String newUrl = requestDto.getUrl();
-        if(checkUrlOverlap(newUrl)){
-            newUrl = createUrlSlug(newUrl);
-        }
+//        // url 중복 체크
+//        String newUrl = requestDto.getUrl();
+//        if(checkUrlOverlap(newUrl)){
+//            newUrl = createUrlSlug(newUrl);
+//        }
         
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .body(requestDto.getBody())
                 .shortDescription(requestDto.getShortDescription())
-                .url(newUrl)
                 .isPrivate(requestDto.getIsPrivate())
                 .user(writeUser)
                 .build();
@@ -114,20 +113,20 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-    // url 중복 체크
-    public Boolean checkUrlOverlap(String url){
-        return postRepository.findByUrl(url) != null ? true : false;
-    }
-
-    // url 중복 시 urlSlug 생성
-    public String createUrlSlug(String url){
-        String urlSlug;
-        String newUrl;
-        do {
-            urlSlug = RandomStringUtils.randomAlphanumeric(5);
-            newUrl = url+"-"+urlSlug;
-        }while(postRepository.findByUrl(newUrl) != null);
-        return newUrl;
-    }
+//    // url 중복 체크
+//    public Boolean checkUrlOverlap(String url){
+//        return postRepository.findByUrl(url) != null ? true : false;
+//    }
+//
+//    // url 중복 시 urlSlug 생성
+//    public String createUrlSlug(String url){
+//        String urlSlug;
+//        String newUrl;
+//        do {
+//            urlSlug = RandomStringUtils.randomAlphanumeric(5);
+//            newUrl = url+"-"+urlSlug;
+//        }while(postRepository.findByUrl(newUrl) != null);
+//        return newUrl;
+//    }
 
 }

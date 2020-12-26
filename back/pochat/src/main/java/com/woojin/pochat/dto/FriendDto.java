@@ -34,4 +34,19 @@ public class FriendDto {
             this.recipientName = recipientName;
         }
     }
+
+    @NoArgsConstructor
+    @Data
+    public static class FriendCancelRequestDto {
+        private String cancelUser;
+        private String canceledUser;
+
+        public FriendCancelRequestDto(String canceledUser, String cancelUser) {
+            Assert.notNull(cancelUser, "cancelUser must be not null");
+            Assert.notNull(canceledUser, "canceledUser must be not null");
+
+            this.cancelUser = cancelUser;
+            this.canceledUser = canceledUser;
+        }
+    }
 }

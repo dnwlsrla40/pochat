@@ -85,6 +85,7 @@ public class ChatRoomService {
         }
 
         createQueue(requestDto.getName(), chatRoom.getId());
+        createdRoom.update("chatroom."+requestDto.getName(), "chat.chatting." + chatRoom.getId());
         return createdRoom;
     }
 
@@ -104,6 +105,8 @@ public class ChatRoomService {
         admin.declareBinding(binding);
 
         container.setQueueNames(queue.getName());
+        System.out.println("======================================queue 연결성공");
         container.setMessageListener(new MessageListenerAdapter(listener, "processMessage"));
+        System.out.println("========================================Listener 연결성공");
     }
 }

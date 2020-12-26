@@ -4,6 +4,8 @@ import com.woojin.pochat.domain.friend.Friend;
 import com.woojin.pochat.dto.FriendDto;
 import com.woojin.pochat.dto.PostDto;
 import com.woojin.pochat.service.FriendService;
+import com.woojin.pochat.util.error.ExistFriendError;
+import com.woojin.pochat.util.error.NoUserError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,7 @@ public class FriendController {
 
     /*
         method
-         - friend 생성
+         - friend 신청
         parameter
          - recipient
      */
@@ -48,10 +50,21 @@ public class FriendController {
         HttpStatus status = null;
         try{
             Friend friend = friendService.addFriend(requestDto);
+            if(friend == null){
+                resultMap.put("message", "잘못된 요청입니다.");
+            }
             resultMap.put("status", true);
             resultMap.put("data", friend);
             // 요청 성공 + 새로운 리소스 생성
             status = HttpStatus.CREATED;
+        } catch(NoUserError e){
+            resultMap.put("status", true);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.OK;
+        } catch (ExistFriendError e) {
+            resultMap.put("status", true);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.OK;
         } catch(RuntimeException e) {
             log.error("", e);
             resultMap.put("message", e.getMessage());
@@ -141,6 +154,28 @@ public class FriendController {
             List<Friend> acceptFriendList = friendService.getFriendAcceptList();
             resultMap.put("status", true);
             resultMap.put("data", acceptFriendList);
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+    
+    /*
+        method
+         - 보낸 friend 취소
+     */
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/friend/cancel")
+    public ResponseEntity<Map<String, Object>> friendCancel(@RequestBody FriendDto.FriendCancelRequestDto requestDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        System.out.println("canceledUser: " +requestDto.getCanceledUser());
+        try{
+            friendService.friendCancel(requestDto);
+            resultMap.put("status", true);
             status = HttpStatus.OK;
         } catch(RuntimeException e) {
             log.error("", e);

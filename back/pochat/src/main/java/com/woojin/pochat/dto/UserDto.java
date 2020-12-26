@@ -20,4 +20,11 @@ public class UserDto {
                     .build();
         }
     }
+
+    @NoArgsConstructor
+    @Data
+    public static class UserUpdateThumbnailRequestDto {
+        private String thumbnail;
+
+    }
 }

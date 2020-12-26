@@ -23,11 +23,22 @@ public class ChatRoom {
     @Column(length = 100)
     private String name;
 
+    @Column(name = "routing_key")
+    private String routingKey;
+
+    @Column(name = "queue_name")
+    private String queueName;
+
     @Builder
     public ChatRoom(String name){
 
         Assert.notNull(name, "name must be not null");
 
         this.name = name;
+    }
+
+    public void update(String queueName, String routingKey){
+        this.queueName = queueName;
+        this.routingKey = routingKey;
     }
 }

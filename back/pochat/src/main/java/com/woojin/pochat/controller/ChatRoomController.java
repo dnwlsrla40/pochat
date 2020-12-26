@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,8 @@ public class ChatRoomController {
 
     // 채팅 리스트 화면(후에 자신이 만든 채팅창만 보이게 변경)
     @GetMapping("/chatroom/list")
-    public ResponseEntity<Map<String, Object>> getCharRoomList(){
+    public ResponseEntity<Map<String, Object>> getCharRoomList(HttpSession session){
+        System.out.println(session.getId());
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{
