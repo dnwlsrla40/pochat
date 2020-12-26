@@ -5,7 +5,7 @@
     </q-card-section>
 
     <q-separator />
-    <q-card-section ref="scollArea" class="scroll" style="height : calc(100vh - 236px); min-width : 320px;">
+    <q-card-section ref="scollArea" class="scroll" style="height : calc(100vh - 236px); min-width : 320px; padding-bottom : 68px;">
       <template v-for="(item,index) in recvList" >
             
         <template v-if="item.type=='newUser'">
@@ -58,12 +58,14 @@ export default {
   mounted(){
     if(this.token != null){
       this.onChangeChatId();
+      
     } else {
         this.$router.push('/');
     }
   },
   watch: {
-    'chatId' : 'onChangeChatId'
+    'chatId' : 'onChangeChatId',
+    // 'recvList' : 'scrollBottom'
   },
   methods : {
     onMessageReceived(payload){
@@ -79,6 +81,12 @@ export default {
         }
         console.log("=======================받았다!!!!!!!!!!!!!!!!!!!!")
         this.recvList.push(sub_message);
+        this.scrollBottom();
+    },
+    scrollBottom () {
+      this.$nextTick(() => {
+        this.$refs.scollArea.$el.scrollTop = this.$refs.scollArea.$el.scrollHeight;
+      })
     },
     onCreateConnection: function(){
       console.log('chatid 업데이트됨')
@@ -107,6 +115,7 @@ export default {
       this.recvList=[];
       this.onCreateConnection();
       this.getChatHistory();
+      this.scrollBottom();
       // this.getChatHistory();
     },
     // sendMessage (e) {
