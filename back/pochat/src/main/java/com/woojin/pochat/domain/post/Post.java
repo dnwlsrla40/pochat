@@ -30,16 +30,9 @@ public class Post extends BaseTimeEntity {
     @Column(length = 150, name = "short_description")
     private String shortDescription;
 
-    @Column(length = 100, unique = true, nullable = false)
-    private String url;
-
     @Column(name = "is_private", columnDefinition = "TINYINT")
     @ColumnDefault("0")
     private Boolean isPrivate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
 
     @Column(columnDefinition = "TINYINT", nullable = false)
     @ColumnDefault("0")
@@ -50,18 +43,16 @@ public class Post extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Post(String title, String body, String shortDescription, String url, Boolean isPrivate, Boolean favorite, User user) {
+    public Post(String title, String body, String shortDescription, Boolean isPrivate, Boolean favorite, User user) {
         Assert.notNull(title, "title must be not null");
         Assert.notNull(body, "body must be not null");
         Assert.notNull(shortDescription, "shortDescription must be not null");
-        Assert.notNull(url, "url must be not null");
         Assert.notNull(isPrivate, "isPrivate must be not null");
         Assert.notNull(user, "user must be not null");
 
         this.title = title;
         this.body = body;
         this.shortDescription = shortDescription;
-        this.url = url;
         this.isPrivate = isPrivate;
         this.favorite = favorite;
         this.user = user;
@@ -71,7 +62,6 @@ public class Post extends BaseTimeEntity {
     @PrePersist
     public void prePersist(){
         this.isPrivate = this.isPrivate == null ? false : this.isPrivate;
-        this.url = this.url == null ? "/@"+this.user.getUsername()+"/"+this.title : this.url;
         this.shortDescription = this.shortDescription == null ? (this.body.length() > 70 ? this.body.substring(0,70) : this.body) : this.shortDescription;
         this.favorite = this.favorite == null ? false : this.favorite;
     }

@@ -2,7 +2,8 @@ package com.woojin.pochat.util.error;
 
 import lombok.Setter;
 
-@Setter
-public class NoUserError {
-    private String message;
+public class NoUserError extends Exception{
+    public NoUserError(){
+        super("존재하지 않는 유저 입니다.");
+    }
 }

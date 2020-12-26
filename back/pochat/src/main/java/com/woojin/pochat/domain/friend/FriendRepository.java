@@ -12,7 +12,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     @Query("select f from Friend as f where f.sender=?1")
     List<Friend> findAllBySenderName(User sender);
 
-    @Query("select f from Friend as f where f.sender=?1 and f.isAccept=true")
+    @Query("select f from Friend as f where f.sender=?1 and f.isAccept=false")
     List<Friend> findAllbySenderNameAndIsAccept(User sender);
 
     @Query("select f from Friend as f where f.sender.username=?1 and f.recipient.username=?2")

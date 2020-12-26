@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.UnsupportedEncodingException;
 
 @Component
 public class Listener {
@@ -25,18 +26,24 @@ public class Listener {
         this.template = template;
     }
 
-    public void processMessage(byte[] bytes) {
-        String str = "";
-        for(byte x : bytes){
-            if((char)x != '\\')
-                str += (char) x;
-        }
+    public void processMessage(byte[] bytes) throws UnsupportedEncodingException {
+        //bytes.
+        String str = new String(bytes, "UTF-8");
+//        for(byte x : bytes){
+//            if((char)x != '\\') {
+//                str += (char) x;
+//                System.out.println("x : " + x);
+//            }
+//            System.out.println("str : " + str);
+//        }
+        System.out.println("============================================Listener"+str);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         try{
             WebSocketChatMessage webSocketChatMessage = objectMapper.readValue(str, WebSocketChatMessage.class);
             System.out.println(webSocketChatMessage.getMessage());
+            System.out.println("================================/topic/" + webSocketChatMessage.getChannel());
             this.template.convertAndSend("/topic/"+webSocketChatMessage.getChannel(), webSocketChatMessage);
         }catch(Exception e){
             System.out.println(e);

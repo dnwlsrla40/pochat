@@ -4,6 +4,8 @@ import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.dto.UserDto;
 import com.woojin.pochat.service.UserService;
 import com.woojin.pochat.util.UploadThumbnailUtils;
+import com.woojin.pochat.util.error.ExistUserError;
+import com.woojin.pochat.util.error.NoUserError;
 import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +36,24 @@ public class UserController {
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/signup")
-    public String signUp(@RequestBody UserDto.UserCreateRequestDto requestDto){
-        return userService.signUp(requestDto);
+    public ResponseEntity<Map<String, Object>> signUp(@RequestBody UserDto.UserCreateRequestDto requestDto){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+
+        try{
+            User signUpUser = userService.signUp(requestDto);
+            resultMap.put("status", true);
+            resultMap.put("data", signUpUser);
+            status = HttpStatus.CREATED;
+        } catch(ExistUserError e){
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("회원가입 실패", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
 
@@ -56,6 +74,9 @@ public class UserController {
             resultMap.put("status", true);
             resultMap.put("data", loginUser);
             status = HttpStatus.ACCEPTED;
+        } catch(NoUserError e){
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.OK;
         } catch(RuntimeException e) {
             log.error("로그인 실패", e);
             resultMap.put("message", e.getMessage());
@@ -75,5 +96,24 @@ public class UserController {
     @PostMapping("/thumbnail")
     public String uploadThumbnail(@RequestPart("file") MultipartFile file) throws Exception{
         return UploadThumbnailUtils.fileUpload(thumbnailPath, file.getOriginalFilename(), file.getBytes());
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/thumbnail/update")
+    public ResponseEntity<Map<String, Object>> updateThumbnail(@RequestBody UserDto.UserUpdateThumbnailRequestDto requestDto){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+
+        try{
+            User signUpUser = userService.updateThumbnail(requestDto);
+            resultMap.put("status", true);
+            resultMap.put("data", signUpUser);
+            status = HttpStatus.CREATED;
+        } catch(RuntimeException e) {
+            log.error("프로필 변경 실패", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 }

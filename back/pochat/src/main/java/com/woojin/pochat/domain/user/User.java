@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @NoArgsConstructor
 @Data
@@ -33,7 +34,6 @@ public class User extends BaseTimeEntity {
 
         Assert.notNull(username, "username must be not null");
         Assert.notNull(password, "password must be not null");
-        Assert.notNull(thumbnail, "thumbnail must be not null");
 
         this.username = username;
         this.password = password;
@@ -48,5 +48,9 @@ public class User extends BaseTimeEntity {
         return id.equals(user.id) &&
                 username.equals(user.username) &&
                 password.equals(user.password);
+    }
+
+    public void updateThumbnail(String thumbnail){
+        this.thumbnail = thumbnail;
     }
 }

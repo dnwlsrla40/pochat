@@ -1,5 +1,6 @@
 package com.woojin.pochat.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woojin.pochat.domain.WebSocketChatMessage;
 import com.woojin.pochat.service.ChatService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,16 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebSocketChatController {
 
     private RabbitTemplate rabbitTemplate;
-    private SimpMessagingTemplate template;
 
     private static final String EXCHANGE_NAME = "chat.topic";
 
     @Autowired
     private final ChatService chatService;
 
-    public WebSocketChatController(RabbitTemplate rabbitTemplate, SimpMessagingTemplate template, ChatService chatService){
+    public WebSocketChatController(RabbitTemplate rabbitTemplate, ChatService chatService){
         this.rabbitTemplate = rabbitTemplate;
-        this.template = template;
         this.chatService = chatService;
     }
 
@@ -40,17 +39,26 @@ public class WebSocketChatController {
     public void sendMessage(@Payload WebSocketChatMessage webSocketChatMessage){
         System.out.println("websocketchatController" + webSocketChatMessage);
         chatService.createChat(webSocketChatMessage);
+        ObjectMapper objectMapper = new ObjectMapper();
         rabbitTemplate.convertAndSend(EXCHANGE_NAME, "chat.chatting." + webSocketChatMessage.getChannel(), webSocketChatMessage);
+
+//        try {
+//            String json = objectMapper.writeValueAsString(webSocketChatMessage);
+//            byte[] bytes = json.getBytes("UTF-8");
+//        }
+//        catch (Exception e) {
+//            System.out.println("흑흑");
+//        }
     }
 
     /*
         client(/app/chat.newUser) -> controller(/topic/javainuse) -> RabbitMq
      */
     @MessageMapping("/chat.newUser")
-    public void newUser(@Payload WebSocketChatMessage webSocketChatMessage,
-                                        SimpMessageHeaderAccessor headerAccessor) {
+    public void newUser(@Payload WebSocketChatMessage webSocketChatMessage) {
         System.out.println("new User");
-        headerAccessor.getSessionAttributes().put("username", webSocketChatMessage.getUsername());
-        this.template.convertAndSend("/topic/"+webSocketChatMessage.getChannel(), webSocketChatMessage);
+//        headerAccessor.getSessionAttributes().put("username", webSocketChatMessage.getUsername());
+//        this.template.convertAndSend("/topic/"+webSocketChatMessage.getChannel(), webSocketChatMessage);
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME, "chat.chatting." + webSocketChatMessage.getChannel(), webSocketChatMessage);
     }
 }

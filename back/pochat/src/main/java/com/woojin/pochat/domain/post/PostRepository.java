@@ -10,8 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Post findByUrl(String url);
-    Optional<Post> findByTitle(String title);
 
     @Query("select p from Post as p where p.user.username = ?1")
     List<Post> findAllByUsername(String username);

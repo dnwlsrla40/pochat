@@ -6,6 +6,9 @@ import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.domain.user.UserRepository;
 import com.woojin.pochat.dto.FriendDto;
 import com.woojin.pochat.dto.PostDto;
+import com.woojin.pochat.util.error.ExistFriendError;
+import com.woojin.pochat.util.error.ExistUserError;
+import com.woojin.pochat.util.error.NoUserError;
 import com.woojin.pochat.util.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +31,20 @@ public class FriendService {
 
     /*
         method function
-         - friend 생성
+         - friend 신청
         Parameter
          - recipient = 친추 받는 사람
      */
     @Transactional
-    public Friend addFriend(FriendDto.FriendCreateRequestDto requestDto) {
+    public Friend addFriend(FriendDto.FriendCreateRequestDto requestDto) throws NoUserError, ExistFriendError {
 
         // 접속중인 username 가져오기
         Map map = (Map)jwtService.get().get("User");
         String username = (String)map.get("username");
+
+        if(userRepository.findByUsername(requestDto.getRecipientName()).isEmpty()) {
+            throw new NoUserError();
+        }
 
         User sender = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
         User recipient = userRepository.findByUsername(requestDto.getRecipientName()).orElseThrow(NoSuchElementException::new);
@@ -51,8 +58,8 @@ public class FriendService {
         if(sender.equals(recipient)){
             return null;
         }
-        if(friendRepository.existsBySenderAndRecipient(sender, recipient)){
-            return null;
+        if(friendRepository.existsBySenderAndRecipient(sender, recipient) || friendRepository.existsBySenderAndRecipient(recipient,sender)){
+            throw new ExistFriendError();
         }
 
         return friendRepository.save(friend);
@@ -81,7 +88,7 @@ public class FriendService {
 
         User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
 
-        return friendRepository.findAllBySenderName(loginUser);
+        return friendRepository.findAllbySenderNameAndIsAccept(loginUser);
     }
 
 
@@ -113,5 +120,18 @@ public class FriendService {
         User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
 
         return friendRepository.findAllbyNameAndIsAccept(loginUser);
+    }
+
+    /*
+        method function
+         - friend 신청 취소
+     */
+    @Transactional
+    public void friendCancel(FriendDto.FriendCancelRequestDto requestDto) {
+        System.out.println("cancelUSer: " + requestDto.getCancelUser());
+        System.out.println("canceledUSer: " + requestDto.getCanceledUser());
+        Friend cancelFriend = friendRepository.findAllBySenderNameAndRecipientName(requestDto.getCancelUser(), requestDto.getCanceledUser());
+        System.out.println(cancelFriend);
+        friendRepository.delete(cancelFriend);
     }
 }
