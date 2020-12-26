@@ -6,7 +6,7 @@
         <div class="col">
           <q-splitter v-model="splitter" separator-class="bg-purple-3" separator-style="width: 2px" :limits="[0, 100]">
             <template v-slot:before>
-              <chat-content  />
+              <chat-content ref="chatContent" />
             </template>
             
             <template v-slot:after>
@@ -16,8 +16,8 @@
         </div>
 
         <div class="col-auto row q-gutter-x-md q-pa-md bg-grey-1">
-          <q-input class="col" />
-          <q-btn class="col-auto" color="primary" label="보내기" />
+          <q-input v-model="message" class="col" @keydown.enter="onMessageSend" />
+          <q-btn class="col-auto" color="primary" label="보내기" @click="onMessageSend" />
         </div>
       </div>
     </q-card-section>
@@ -32,12 +32,19 @@ export default {
   name: 'MainContent',
   data () {
     return {
-      splitter : 50
+      splitter : 50,
+      message : ''
     }
   },
 
   mounted : function () {
 
+  },
+  methods : {
+    onMessageSend : function () {
+      this.$refs.chatContent.onMessageSend(this.message)
+      this.message = ''
+    }
   }
 }
 </script>

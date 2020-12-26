@@ -31,10 +31,6 @@
 
 <script>
 
-const storage = window.sessionStorage;
-const token = storage.getItem("jwt-auth-token");
-const login_user = storage.getItem("login_user");
-
 export default {
 
   name: 'PostEditor',
@@ -50,8 +46,16 @@ export default {
       errMsg: ''
     }
   },
-    created(){
-        if(token != null && token.length > 0){
+  computed : {
+    token : function () {
+      return sessionStorage.getItem("jwt-auth-token");
+    },
+    login_user : function () {
+      return sessionStorage.getItem("login_user");
+    }
+  },
+    mounted(){
+        if(this.token != null && this.token.length > 0){
         } else {
             this.$router.push('/login');
         }
@@ -83,7 +87,7 @@ export default {
                 isPrivate: this.scope
             },{
                 headers:{
-                    "jwt-auth-token": storage.getItem("jwt-auth-token")
+                    "jwt-auth-token": this.token
                 },
             })
             .then((res) => {

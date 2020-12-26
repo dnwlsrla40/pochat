@@ -15,7 +15,7 @@
         </div>
         <div class="col-auto q-gutter-x-sm">
           <q-btn label="프로필 변경" @click="onChangeProfile" />
-          <q-btn label="친구추가"  />
+          <q-btn label="친구추가"  @click="onCreateFriend"/>
         </div>
       </q-card-section>
     </q-card-section>
@@ -23,42 +23,42 @@
     <q-card-section>
       <q-expansion-item label="친구목록" expand-separator>
         <q-list class="scroll">
-          <q-item clickable v-ripple v-for="(number, index) in 10" :key="index">
+          <q-item clickable v-ripple v-for="(item, index) in friendAcceptList" :key="index">
             <q-item-section avatar>
               <q-avatar>
-                <img src="https://cdn.entermedia.co.kr/news/photo/202010/21304_40107_5416.jpg"> 
+                <img :src="item.imgSource"> 
               </q-avatar>
             </q-item-section>
-            <q-item-section>테스형</q-item-section>
+            <q-item-section>{{item.friendName}}</q-item-section>
           </q-item>
         </q-list>
       </q-expansion-item>
       <q-expansion-item label="보낸 친구신청" expand-separator>
         <q-list class="scroll">
-          <q-item clickable v-ripple v-for="(number, item) in friendSendList" :key="item">
+          <q-item clickable v-ripple v-for="(item, index) in friendSendList" :key="index">
             <q-item-section avatar>
               <q-avatar>
-                <img src="https://cdn.entermedia.co.kr/news/photo/202010/21304_40107_5416.jpg"> 
+                <img :src="item.imgSource"> 
               </q-avatar>
             </q-item-section>
-            <q-item-section>테스형</q-item-section>
+            <q-item-section>{{item.recipient}}</q-item-section>
             <q-item-section class="items-end">
-              <q-btn label="취소" flat />
+              <q-btn label="취소" flat @click="cancelFriend(item)"/>
             </q-item-section>
           </q-item>
         </q-list>
       </q-expansion-item>
       <q-expansion-item label="받은 친구신청" expand-separator>
         <q-list class="scroll">
-          <q-item clickable v-ripple v-for="(number, index) in 10" :key="index">
+          <q-item clickable v-ripple v-for="(item, index) in friendRequestList" :key="index">
             <q-item-section avatar>
               <q-avatar>
-                <img src="https://cdn.entermedia.co.kr/news/photo/202010/21304_40107_5416.jpg"> 
+                <img :src="item.imgSource"> 
               </q-avatar>
             </q-item-section>
-            <q-item-section>테스형</q-item-section>
+            <q-item-section>{{item.sender}}</q-item-section>
             <q-item-section class="items-end">
-              <q-btn label="승인" color="primary" flat />
+              <q-btn label="승인" color="primary" flat @click="acceptFriend(item)" />
             </q-item-section>
           </q-item>
         </q-list>
@@ -68,21 +68,19 @@
     
   </q-card>
 
-  <change-profile-dialog :show="dialog" @cancel="dialog = false" />
+  <change-profile-dialog :show="profileDialog" @cancel="profileDialog = false" @submit="onProfileSubmit"/>
+  <create-friend-dialog :show="friendDialog" @cancel="friendDialog = false" @submit="onFriendSubmit"/>
 
 </q-page>
 </template>
 
 <script>
 import ChangeProfileDialog from 'src/components/dialog/ChangeProfileDialog.vue'
-const storage = window.sessionStorage;
-const token = storage.getItem("jwt-auth-token");
-const login_user = storage.getItem("login_user");
-
+import CreateFriendDialog from 'src/components/dialog/CreateFriendDialog.vue'
 
 export default {
   name: 'UserPage',
-  components : {ChangeProfileDialog},
+  components : {ChangeProfileDialog, CreateFriendDialog},
   data () {
     return {
       username: '',
@@ -92,13 +90,21 @@ export default {
       friendRequestList: [],
       friendAcceptList: [],
       friend_id: '',
-      thumbnail: '',
-      imgSource : "https://cdnimg.melon.co.kr/cm2/album/images/103/46/650/10346650_1000.jpg?14a08050b8c6adc879b6e0cf587d456a/melon/quality/80/optimize",
-      dialog : false
+      imgSource : "",
+      profileDialog : false,
+      friendDialog : false
     }
   },
-  created(){
-    if(token != null && token.length > 0){
+  computed : {
+    token : function () {
+      return sessionStorage.getItem("jwt-auth-token");
+    },
+    login_user : function () {
+      return sessionStorage.getItem("login_user");
+    }
+  },
+  mounted(){
+    if(this.token != null && this.token.length > 0){
         this.connect();
         this.getFriendSendList();
         this.getFriendRequestList();
@@ -108,10 +114,16 @@ export default {
     }
   },
   methods: {
+      triggerPositive : function (messages) {
+          this.$q.notify({
+              type: 'positive',
+              message: messages
+          })
+      },
       connect: function() {
-          this.$axios.get('http://localhost:8080/user/'+login_user,{
+          this.$axios.get('http://localhost:8080/user/'+this.login_user,{
               headers:{
-                  "jwt-auth-token": storage.getItem("jwt-auth-token")
+                  "jwt-auth-token": this.token
               },
           })
           .then((res) => {
@@ -119,7 +131,7 @@ export default {
               this.username = res.data.username;
               const date = String(res.data.created_at).split('T')[0].split('-');
               this.created_at = date[0] + "년 " + date[1] + "월 "+ date[2] +"일";
-              this.thumbnail = res.data.thumbnail;
+              this.imgSource = "http://localhost:8080/img" + res.data.thumbnail;
           }).catch((e) => {
               console.error(e);
           })
@@ -131,7 +143,7 @@ export default {
               recipientName: this.recipient
           },{
               headers:{
-                  "jwt-auth-token": storage.getItem("jwt-auth-token")
+                  "jwt-auth-token": this.token
               },
           })
           .then((res) => {
@@ -146,7 +158,7 @@ export default {
       getFriendSendList: function(){
           this.$axios.get('http://localhost:8080/friend/send/list',{
               headers:{
-                  "jwt-auth-token": storage.getItem("jwt-auth-token")
+                  "jwt-auth-token": this.token
               },
           })
           .then((res) => {
@@ -155,8 +167,8 @@ export default {
                   for(var i=0; i<res.data.data.length; i++){
                       this.friendSendList.push(
                           {
+                              imgSource: "http://localhost:8080/img" + res.data.data[i].recipient.thumbnail,
                               recipient: res.data.data[i].recipient.username,
-                              isAccept: res.data.data[i].isAccept
                           }
                       );
                   }
@@ -170,17 +182,21 @@ export default {
           this.$axios.post('http://localhost:8080/friend/accept',
           {
               senderName: item.sender,
-              recipientName: login_user
+              recipientName:this.login_user
           },
           {
               headers:{
-                  "jwt-auth-token": storage.getItem("jwt-auth-token")
+                  "jwt-auth-token": this.token
               },
           })
           .then((res) => {
               console.log(res.data.data);
               if(res.data.status){
-                  this.created();
+                  const messages = "친구 요청을 수락하였습니다!"
+                  this.triggerPositive(messages)
+                  this.friendRequestList.pop(item)
+                  this.friendAcceptList = []
+                  this.getFriendAcceptList();
               }
           }).catch((e) => {
               console.error(e);
@@ -189,7 +205,7 @@ export default {
       getFriendRequestList: function(){
           this.$axios.get('http://localhost:8080/friend/request/list',{
               headers:{
-                  "jwt-auth-token": storage.getItem("jwt-auth-token")
+                  "jwt-auth-token": this.token
               },
           })
           .then((res) => {
@@ -198,6 +214,7 @@ export default {
                   for(var i=0; i<res.data.data.length; i++){
                       this.friendRequestList.push(
                           {
+                              imgSource: "http://localhost:8080/img" + res.data.data[i].sender.thumbnail,
                               sender: res.data.data[i].sender.username
                           }
                       );
@@ -210,22 +227,24 @@ export default {
       getFriendAcceptList: function(){
           this.$axios.get('http://localhost:8080/friend/accept',{
               headers:{
-                  "jwt-auth-token": storage.getItem("jwt-auth-token")
+                  "jwt-auth-token": this.token
               },
           })
           .then((res) => {
               console.log(res.data.data);
               if(res.data.status){
                   for(var i=0; i<res.data.data.length; i++){
-                      if(login_user == res.data.data[i].sender.username){
+                      if(this.login_user == res.data.data[i].sender.username){
                           this.friendAcceptList.push(
                               {
+                                  imgSource: "http://localhost:8080/img" + res.data.data[i].recipient.thumbnail,
                                   friendName: res.data.data[i].recipient.username
                               }
                           )
-                      } else if(login_user == res.data.data[i].recipient.username){
+                      } else if(this.login_user == res.data.data[i].recipient.username){
                           this.friendAcceptList.push(
                               {
+                                  imgSource: "http://localhost:8080/img" + res.data.data[i].sender.thumbnail,
                                   friendName: res.data.data[i].sender.username
                               }
                           )
@@ -237,7 +256,44 @@ export default {
           })
       },
       onChangeProfile: function () {
-        this.dialog = true;
+        this.profileDialog = true;
+      },
+      onProfileSubmit: function(thumbnail) {
+        this.imgSource = "http://localhost:8080/img/" + thumbnail;
+        this.profileDialog = false;
+      },
+      onCreateFriend: function() {
+        this.friendDialog = true;
+      },
+      onFriendSubmit: function(newFriend) {
+        this.friendSendList.push({
+            imgSource: "http://localhost:8080/img" + newFriend.recipient.thumbnail,
+            recipient: newFriend.recipient.username
+        })
+        this.friendDialog = false;
+      },
+      cancelFriend: function(item){
+        console.log("==========================" + item.recipient)
+        this.$axios.post('http://localhost:8080/friend/cancel',
+        {
+            cancelUser: this.login_user,
+            canceledUser: item.recipient
+        },
+        {
+              headers:{
+                  "jwt-auth-token": this.token
+              },
+          })
+          .then((res) => {
+              console.log(res.data.data);
+              if(res.data.status){
+                  const messages = "요청이 취소되었습니다!"
+                  this.triggerPositive(messages)
+                  this.friendSendList.pop(item);
+              }
+          }).catch((e) => {
+              console.error(e);
+          })
       }
   }
 }

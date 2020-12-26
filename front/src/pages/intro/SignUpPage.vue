@@ -1,6 +1,15 @@
 <template>
-    <q-dialog v-model="show" persistent>
-        <q-card style="width : 551px;">
+  <q-page class="column justify-center">
+    <div class="col-auto row justify-center">
+      <div class="col-2 q-gutter-y-md">
+        <div class="text-center">
+          <span class="text-h3 text-weight-bold">PoChat</span>
+        </div>
+        <q-card>
+          <q-form>
+
+              <div>"This is SignUp Page."</div>
+
             <q-card-section class="q-gutter-y-md">
                 <img  id="thumbnailImg" :src="filePath">
                 <q-file label="프로필 이미지" v-model="file" accept=".jpg, image/*" @input="profileChange">
@@ -11,33 +20,48 @@
                 <div class="flex justify-end q-gutter-x-sm">
                     <q-btn label="프로필 업로드" @click="profileUpload"/>
                 </div>
-                <div class="flex justify-end q-gutter-x-sm">
-                    <q-btn label="확인" @click="onSubmit" />
-                    <q-btn label="취소" @click="onCancel" />
-                </div>
             </q-card-section>
+
+            <q-card-section>
+              <q-input label="username" v-model.trim="username"/>
+              <q-input label="password" type="password" v-model.trim="password"/>
+            </q-card-section>
+
+            <q-card-section class="flex justify-center q-gutter-x-md">
+              <q-btn label="signUp" color="purple-3" @click="signup"/>
+              <q-btn label="login" color="primary" @click="tryLogin"/>
+            </q-card-section>
+
+          </q-form>
         </q-card>
-    </q-dialog>
+      </div>
+    </div>
+  </q-page>
 </template>
 
 <script>
+
 export default {
-    props : [ 'show' ],
-    data () {
+  name: 'SignInPage',
+   data: function () {
         return {
-            file : null,
-            filePath : ''
+            username: '',
+            password: '',
+            file: null,
+            filePath: '',
+            profile: null
         }
     },
-    computed : {
-        token : function () {
-            return sessionStorage.getItem("jwt-auth-token");
-        },
-    },
-    methods : {
+    methods: {
         triggerPositive : function (messages) {
             this.$q.notify({
                 type: 'positive',
+                message: messages
+            })
+        },
+        triggerNegative : function(messages) {
+            this.$q.notify({
+                type: 'negative',
                 message: messages
             })
         },
@@ -47,42 +71,52 @@ export default {
             message: messages
             })
         },
-        imageChange: function(e){
-            
-        },
-        profileChange: function(e){
-        },
-        onSubmit : function() {
+        signup: function() {
+            if ( this.username == '' ) {
+                const errMsg = 'Please enter your username';
+                this.triggerNegative(errMsg);
+                return;
+            }
+            if ( this.password == '' ) {
+                const errMsg = 'Please enter your password';
+                this.triggerNegative(errMsg);
+                return;
+            }
             if( this.file != null && this.profile == null){
                 const warnMsg = '프로필 업로드 버튼을 눌러주세요.'
                 this.triggerWarning(warnMsg);
                 return;
             }
             this.$axios.post(
-                'http://localhost:8080/thumbnail/update',
+                'http://localhost:8080/signup',
                 {
+                    username: this.username,
+                    password: this.password,
                     thumbnail: this.profile
                 },
                 {
                     headers: {
-                        "jwt-auth-token": this.token,
                         'Access-Control-Allow-Origin': '*',
                         'Content-Type': 'application/json'
                     }
                 }
             ).then((res) => {
                 console.log(res.data);
-                if(res.data.status){
-                    const messages = "프로필 변경이 완료되었습니다!"
-                    this.triggerPositive(messages)
-                    this.$emit('submit', res.data.data.thumbnail)
+                if(res.data.message == "이미 존재하는 유저"){
+                    const errMsg = '이미 존재하는 username입니다.';
+                    this.triggerNegative(errMsg);
+                    return;
+                } else if(res.status){
+                    this.$router.push('/')
                 }
             }).catch((e) => {
                 console.error(e);
             });
         },
-        onCancel : function () {
-            this.$emit('cancel')
+        tryLogin: function() {
+            this.$router.push('/')
+        },
+        profileChange: function(e){
         },
         profileUpload: function() {
             var frm = new FormData();

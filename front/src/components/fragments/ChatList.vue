@@ -24,10 +24,6 @@
 <script>
 import NewChatDialog from '../dialog/NewChatDialog.vue';
 
-const storage = window.sessionStorage;
-const token = storage.getItem("jwt-auth-token");
-const login_user = storage.getItem("login_user");
-
 export default {
   name: 'ChatList',
   components : {NewChatDialog},
@@ -38,8 +34,16 @@ export default {
       chatRoomList: []
     }
   },
-  created(){
-      if(token != null && token.length > 0){
+  computed : {
+    token : function () {
+      return sessionStorage.getItem("jwt-auth-token");
+    },
+    login_user : function () {
+      return sessionStorage.getItem("login_user");
+    }
+  },
+  mounted(){
+      if(this.token != null && this.token.length > 0){
           this.connect();
       } else {
           this.$router.push('/');
@@ -61,7 +65,7 @@ export default {
       //process.env.VUE_APP_API + 
         this.$axios.get('http://localhost:8080/chatroom/list',{
             headers:{
-                "jwt-auth-token": storage.getItem("jwt-auth-token")
+                "jwt-auth-token":this.token
             }
         })
         .then((res) => {
@@ -85,13 +89,11 @@ export default {
       // this.$router.push({
       //     path: '/chat/content/'+item.chatroom_id, 
       //   });
-
       const params = this.$route.params
       if (!params.postId) {
         params.postId = -1
       }
       params.chatId = item.chatroom_id
-      console.log('===========================',params)
       
       this.$router.push({
         //path : `/main/content/${item.chatroom_id}`
@@ -99,9 +101,6 @@ export default {
         params :params
       })
     },
-    // createChatRoom: function() {
-    //     this.$router.push('/chat/create')
-    // }
   }
 }
 </script>

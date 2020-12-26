@@ -12,7 +12,7 @@
             <q-item clickable v-ripple v-for="(item, index) in friendList" :key="index">
               <q-item-section avatar>
                 <q-avatar>
-                  <img src="https://cdn.entermedia.co.kr/news/photo/202010/21304_40107_5416.jpg"> 
+                  <img :src="item.imgSource"> 
                 </q-avatar>
               </q-item-section>
               <q-item-section>{{item.friendName}}</q-item-section>
@@ -40,10 +40,6 @@
 
 <script>
 
-const storage = window.sessionStorage;
-const token = storage.getItem("jwt-auth-token");
-const login_user = storage.getItem("login_user");
-
 export default {
   name : "NewChatDialog",
   props : [ 'show' ],
@@ -54,8 +50,16 @@ export default {
       chatRoomName: ''
     }
   },
-  created(){
-    if(token != null && token.length > 0){
+  computed : {
+    token : function () {
+      return sessionStorage.getItem("jwt-auth-token");
+    },
+    login_user : function () {
+      return sessionStorage.getItem("login_user");
+    }
+  },
+  mounted(){
+    if(this.token != null && this.token.length > 0){
         this.getAcceptedFriendList();
     } else {
         this.$router.push('/login');
@@ -75,7 +79,7 @@ export default {
       }),
       {
           headers:{
-              "jwt-auth-token": storage.getItem("jwt-auth-token"),
+              "jwt-auth-token": this.token,
               'Content-Type': 'application/json'
           }
       })
@@ -93,25 +97,25 @@ export default {
     getAcceptedFriendList: function(){
       this.$axios.get('http://localhost:8080/friend/accept',{
           headers:{
-              "jwt-auth-token": storage.getItem("jwt-auth-token")
+              "jwt-auth-token": this.token
           },
       })
       .then((res) => {
           console.log(res.data.data);
           if(res.data.status){
               for(var i=0; i<res.data.data.length; i++){
-                  if(login_user == res.data.data[i].sender.username){
+                  if(this.login_user == res.data.data[i].sender.username){
                       this.friendList.push(
                           {
-                              friendName: res.data.data[i].recipient.username,
-                              chatroom_id : res.data.data[i].id
+                              imgSource: "http://localhost:8080/img" + res.data.data[i].recipient.thumbnail,
+                              friendName: res.data.data[i].recipient.username
                           }
                       )
-                  } else if(login_user == res.data.data[i].recipient.username){
+                  } else if(this.login_user == res.data.data[i].recipient.username){
                       this.friendList.push(
                           {
-                              friendName: res.data.data[i].sender.username,
-                              chatroom_id : res.data.data[i].id
+                              imgSource: "http://localhost:8080/img" + res.data.data[i].sender.thumbnail,
+                              friendName: res.data.data[i].sender.username
                           }
                       )
                   }

@@ -34,11 +34,6 @@
 </template>
 
 <script>
-
-const storage = window.sessionStorage;
-const token = storage.getItem("jwt-auth-token");
-const login_user = storage.getItem("login_user");
-
 export default {
   name: 'PostContent',
     data () {
@@ -53,13 +48,19 @@ export default {
     computed: {
       postId : function () {
         return this.$route.params.postId;
+      },
+      token : function () {
+        return sessionStorage.getItem("jwt-auth-token");
+      },
+      login_user : function () {
+        return sessionStorage.getItem("login_user");
       }
     },
     watch: {
         'postId': 'connect'
     },
-    created(){
-        if(token != null && token.length > 0){
+    mounted(){
+        if(this.token != null && this.token.length > 0){
             this.connect();
         } else {
             this.$router.push('/');
@@ -71,7 +72,7 @@ export default {
             this.loading = true
             this.$axios.get('http://localhost:8080/post/'+this.$route.params.id, {
                 headers:{
-                    "jwt-auth-token": storage.getItem("jwt-auth-token")
+                    "jwt-auth-token": this.token
                 },
             })
             .then((res) => {
@@ -92,7 +93,7 @@ export default {
             }),
             {
                 headers:{
-                    "jwt-auth-token": storage.getItem("jwt-auth-token"),
+                    "jwt-auth-token": this.token,
                     'Content-Type': 'application/json'
                 }
             })

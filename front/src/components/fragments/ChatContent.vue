@@ -5,26 +5,26 @@
     </q-card-section>
 
     <q-separator />
-    <q-card-section class="scroll" style="height : calc(100vh - 236px); min-width : 320px;">
-      <q-chat-message
-        name="아이유"
-        bg-color="white"
-        avatar="https://cdnimg.melon.co.kr/cm2/album/images/103/46/650/10346650_1000.jpg?14a08050b8c6adc879b6e0cf587d456a/melon/quality/80/optimize"
-        :text="['unlucky', '그 사람', 'Blueming', '시간의 바깥', '자장가', 'Love Poemdddddddddddddddddddddddddddddddddddddddddd']"
-      />
-      <q-chat-message
-        name="나"
-        bg-color="yellow-13"
-        avatar="http://images.battlecomics.co.kr/users/274806/page/item/f5356aee-25e4-4e25-8601-2cc926f871f4.jpg"
-        :text="['이건 함정이야!']"
-        sent
-      />
-      <q-chat-message
-        name="아이유"
-        bg-color="white"
-        avatar="https://cdnimg.melon.co.kr/cm2/album/images/103/46/650/10346650_1000.jpg?14a08050b8c6adc879b6e0cf587d456a/melon/quality/80/optimize"
-      >
-        <q-spinner-dots size="2rem" />
+    <q-card-section ref="scollArea" class="scroll" style="height : calc(100vh - 236px); min-width : 320px;">
+      <template v-for="(item,index) in recvList" >
+            
+        <template v-if="item.type=='newUser'">
+          <div
+            v-if="login_user!=item.username"
+            class="system-message"
+             v-text="item.message" 
+          />
+        </template>
+        <q-chat-message
+          v-else
+          :key="index"
+          :name="item.username"
+          :bg-color="login_user == item.username ? 'yellow-13' : 'white'"
+          :avatar="item.imgSource"
+          :text="[item.message]"
+          :sent="login_user == item.username"
+        />
+      </template>
       </q-chat-message>
     </q-card-section>
   </q-card>
@@ -34,92 +34,137 @@
 import Stomp from 'webstomp-client'
 import SockJs from 'sockjs-client'
 
-const storage = window.sessionStorage;
-
 export default {
   name: 'ChatContent',
   data() {
     return {
-      username: storage.getItem("login_user"),
-            message: "",
-            recvList: []
+      username: this.login_user,
+      message: "",
+      recvList: [],
+      currentChatId: -1
     }
   },
-  created(){
-    if(storage.getItem("jwt-auth-token") != null){
-        this.onChangeChatId();    
-    } else {
-        this.$router.push('/');
-    }
-  },
-  computed: {
+  computed : {
+    token : function () {
+      return sessionStorage.getItem("jwt-auth-token");
+    },
+    login_user : function () {
+      return sessionStorage.getItem("login_user");
+    },
     chatId : function () {
       return this.$route.params.chatId;
+    }
+  },
+  mounted(){
+    if(this.token != null){
+      this.onChangeChatId();
+    } else {
+        this.$router.push('/');
     }
   },
   watch: {
     'chatId' : 'onChangeChatId'
   },
   methods : {
-    onChangeChatId : function () {
-      // console.log('chatid 업데이트됨')
+    onMessageReceived(payload){
+
+        console.log("payload: ");
+        var sub_message = JSON.parse(payload.body);
+        if(sub_message.type === 'newUser') {
+          
+            sub_message.message = sub_message.username + '님이 입장하셨습니다.'
+            this.username = this.login_user;
+        } else if (sub_message.type === 'Leave') {
+            sub_message.message = sub_message.username + ' has left the chat';
+        }
+        console.log("=======================받았다!!!!!!!!!!!!!!!!!!!!")
+        this.recvList.push(sub_message);
+    },
+    onCreateConnection: function(){
+      console.log('chatid 업데이트됨')
+      if(this.stompClient) {
+        this.stompClient.unsubscribe(this.currentChatId);
+      }
       const serverURL = "http://localhost:8080/websocketApp"
       let socket = new SockJs(serverURL);
       this.stompClient = Stomp.over(socket);
       this.stompClient.debug = () => {}
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
-      this.stompClient.connect({},
-          frame => {
-              // 소켓 연결 성공
-              this.connected = true;
-              console.log('소켓 연결 성공', frame);
-              // endpoint 구독
-              this.stompClient.subscribe("/topic/" + this.$route.params.id, this.onMessageReceived);
-              this.stompClient.send("/app/chat.newUser", JSON.stringify({
-                  //username: "testUser",
-                  username: storage.getItem("login_user"),
-                  type: 'newUser',
-                  channel: this.$route.params.id
-              }), {});
-          },
-          error => {
-              // 소켓 연결 실패
-              console.log('소켓 연결 실패', error);
-              this.connected = false;
-          }
-      )
+      this.stompClient.connect({}, () => {
+        this.currentChatId = this.chatId
+        this.stompClient.subscribe("/topic/" + this.chatId, this.onMessageReceived, {id : this.chatId});
+        this.stompClient.send("/app/chat.newUser", JSON.stringify({
+            username: this.login_user,
+            type: 'newUser',
+            channel: this.chatId
+        }), {});
+      });
+      // 소켓 연결 성공
+      // console.log("========================newUser 성공~!!!!!!!!!!!!!!!")
     },
-    sendMessage (e) {
-        console.log("here")
-        console.log("e.keyCode: "+e.keyCode +" username: " + this.username + " message: " + this.message)
-        if(e.keyCode === 13 && this.username !== '' && this.message !== ''){
-            console.log("here2")
-            this.send()
-            this.message = ''
-        }
-    },    
-    send() {
-        console.log("Send message:" + this.message);
-        if (this.stompClient && this.stompClient.connected) {
+    onChangeChatId : function () {
+      console.log("=====================지운다!!!!!!!!!!!!!!!!!!!")
+      this.recvList=[];
+      this.onCreateConnection();
+      this.getChatHistory();
+      // this.getChatHistory();
+    },
+    // sendMessage (e) {
+    //     console.log("here")
+    //     console.log("e.keyCode: "+e.keyCode +" username: " + this.username + " message: " + this.message)
+    //     if(e.keyCode === 13 && this.username !== '' && this.message !== ''){
+    //         this.send()
+    //         this.message = ''
+    //     }
+    // },    
+    // send() {
+    //     console.log("Send message:" + this.message);
+    //     if (this.stompClient && this.stompClient.connected) {
+    //         const msg = { 
+    //         username: this.login_user,
+    //         message: this.message,
+    //         type: 'CHAT',
+    //         channel: this.chatId
+    //         };
+    //         this.stompClient.send("/app/chat.sendMessage", JSON.stringify(msg), {});
+    //     }
+    // },
+
+    onMessageSend (payload) {
+      // console.log("============sdfsdfhere")
+      if (this.stompClient && this.stompClient.connected) {
             const msg = { 
-            username: storage.getItem("login_user"),
-            message: this.message,
+            username: this.login_user,
+            message: payload,
             type: 'CHAT',
-            channel: this.$route.params.id
+            channel: this.chatId
             };
             this.stompClient.send("/app/chat.sendMessage", JSON.stringify(msg), {});
         }
     },
-    onMessageReceived(payload){
-        console.log("payload: " + payload);
-        var sub_message = JSON.parse(payload.body);
-        if(sub_message.type === 'newUser') {
-            sub_message.message = sub_message.username + ' has joined the pochat'
-            this.username = storage.getItem("login_user");
-        } else if (sub_message.type === 'Leave') {
-            sub_message.message = sub_message.username + ' has left the chat';
+    getChatHistory: function (){
+      this.$axios.get('http://localhost:8080/chat/history/' + this.chatId,{
+          headers:{
+              "jwt-auth-token":this.token
+          }
+      }).then((res) => {
+        console.log(res.data);
+        if(res.data.status){
+          console.log("+=========================넣는다!!!!!!!!!!!!!!!!!!")
+          for(var i=0; i<res.data.data.length; i++){
+              this.recvList.push(
+                  {
+                      username : res.data.data[i].sender,
+                      message : res.data.data[i].message,
+                      imgSource : res.data.data[i].sender_thumbnail
+                  }
+              );
+          }
+          //this.onCreateConnection();
         }
-        this.recvList.push(sub_message);
+      }).catch((e) => {
+        console.error(e);
+      })
     }
   }
 }
@@ -137,5 +182,9 @@ export default {
   & > div:last-child {
     min-height: 0px;
   }
+}
+.system-message {
+  text-align: center;
+  font-weight : 700;
 }
 </style>
