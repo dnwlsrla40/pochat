@@ -179,13 +179,13 @@ public class PostController {
          - isPrivate
      */
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PostMapping("/update/{postId}")
-    public ResponseEntity<Map<String, Object>> update(@RequestBody PostDto.PostUpdateRequestDto requestDto, Long postId) {
+    @PostMapping("/update")
+    public ResponseEntity<Map<String, Object>> update(@RequestBody PostDto.PostUpdateRequestDto requestDto) {
         System.out.println("requestDto:" + requestDto);
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{
-            Post updatedPost = postService.update(requestDto, postId);
+            Post updatedPost = postService.update(requestDto);
             resultMap.put("status", true);
             resultMap.put("data", updatedPost);
             // 요청 성공 + 새로운 리소스 생성
@@ -204,7 +204,7 @@ public class PostController {
      */
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<Map<String, Object>> delete(Long postId) {
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long postId) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{

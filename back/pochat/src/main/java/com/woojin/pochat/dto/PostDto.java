@@ -58,18 +58,21 @@ public class PostDto {
     @NoArgsConstructor
     @Getter
     public static class PostUpdateRequestDto{
+        private Long Id;
         private String title;
         private String shortDescription;
         private String body;
         private Boolean isPrivate;
 
 
-        public PostUpdateRequestDto(String title, String body, String shortDescription, Boolean isPrivate) {
+        public PostUpdateRequestDto(Long Id, String title, String body, String shortDescription, Boolean isPrivate) {
+            Assert.notNull(Id, "Id must be not null");
             Assert.notNull(title, "title must be not null");
             Assert.notNull(body, "body must be not null");
             Assert.notNull(shortDescription, "shortDescription must be not null");
             Assert.notNull(isPrivate, "isPrivate must be not null");
 
+            this.Id = Id;
             this.title = title;
             this.body = body;
             this.shortDescription = shortDescription;

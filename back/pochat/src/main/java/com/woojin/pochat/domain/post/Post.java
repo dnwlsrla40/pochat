@@ -62,7 +62,7 @@ public class Post extends BaseTimeEntity {
     @PrePersist
     public void prePersist(){
         this.isPrivate = this.isPrivate == null ? false : this.isPrivate;
-        this.shortDescription = this.shortDescription == null ? (this.body.length() > 70 ? this.body.substring(0,70) : this.body) : this.shortDescription;
+        this.shortDescription =  isNull(this.shortDescription) ? (this.body.length() > 70 ? this.body.substring(0,70) : this.body) : this.shortDescription;
         this.favorite = this.favorite == null ? false : this.favorite;
     }
 
@@ -71,5 +71,10 @@ public class Post extends BaseTimeEntity {
         this.shortDescription = shortDescription;
         this.body = body;
         this.isPrivate = isPrivate;
+    }
+
+    public Boolean isNull(String shortDescription){
+
+        return shortDescription.equals("") || shortDescription == null;
     }
 }

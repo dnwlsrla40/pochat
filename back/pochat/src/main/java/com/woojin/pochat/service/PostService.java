@@ -38,6 +38,8 @@ public class PostService {
     @Transactional
     public Post create(PostDto.PostCreateRequestDto requestDto) {
 
+        System.out.println(requestDto.getShortDescription());
+
         // 접속중인 username 가져오기
         Map map = (Map)jwtService.get().get("User");
         String username = (String)map.get("username");
@@ -114,8 +116,10 @@ public class PostService {
     }
 
     @Transactional
-    public Post update(PostDto.PostUpdateRequestDto requestDto, Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(NoSuchElementException::new);
+    public Post update(PostDto.PostUpdateRequestDto requestDto) {
+
+
+        Post post = postRepository.findById(requestDto.getId()).orElseThrow(NoSuchElementException::new);
 
         post.update(requestDto.getTitle(), requestDto.getShortDescription(), requestDto.getBody(), requestDto.getIsPrivate());
 

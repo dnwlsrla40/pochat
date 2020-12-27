@@ -16,25 +16,25 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class RabbitConfig {
     private static final String EXCHANGE_NAME = "chat.topic";
-    private static final String QUEUE_NAME = "chat.queue2";
+//    private static final String QUEUE_NAME = "chat.queue2";
     private static final String ROUTING_KEY = "chat.chatting.#";
 
     // private ConnectionFactory connectionFactory;
 
-    @Bean
-    Queue queue(){
-        return new Queue(QUEUE_NAME, false);
-    }
+//    @Bean
+//    Queue queue(){
+//        return new Queue(QUEUE_NAME, false);
+//    }
 
     @Bean
     TopicExchange exchange(){
         return new TopicExchange(EXCHANGE_NAME);
     }
 
-    @Bean
-    Binding binding(Queue queue, TopicExchange exchange){
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
-    }
+//    @Bean
+//    Binding binding(Queue queue, TopicExchange exchange){
+//        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+//    }
 
     @Bean
     RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter){
