@@ -9,7 +9,7 @@
       <template v-for="(item,index) in recvList" >
             
         <template v-if="item.type=='newUser'">
-          <div
+          <div :key="index"
             v-if="login_user!=item.username"
             class="system-message"
              v-text="item.message" 
@@ -25,7 +25,6 @@
           :sent="login_user == item.username"
         />
       </template>
-      </q-chat-message>
     </q-card-section>
   </q-card>
 </template>
@@ -65,7 +64,6 @@ export default {
   },
   watch: {
     'chatId' : 'onChangeChatId',
-    // 'recvList' : 'scrollBottom'
   },
   methods : {
     onMessageReceived(payload){
@@ -81,9 +79,8 @@ export default {
         }
         console.log("=======================받았다!!!!!!!!!!!!!!!!!!!!")
         this.recvList.push(sub_message);
-        this.scrollBottom();
     },
-    scrollBottom () {
+    updated () {
       this.$nextTick(() => {
         this.$refs.scollArea.$el.scrollTop = this.$refs.scollArea.$el.scrollHeight;
       })
@@ -115,7 +112,6 @@ export default {
       this.recvList=[];
       this.onCreateConnection();
       this.getChatHistory();
-      this.scrollBottom();
       // this.getChatHistory();
     },
     // sendMessage (e) {

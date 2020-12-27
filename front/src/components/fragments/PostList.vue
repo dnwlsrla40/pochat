@@ -6,7 +6,8 @@
         <span class="text-h6">{{list_name}} 목록</span>
         <div class="q-gutter-x-sm">
           <q-btn size="sm" color="primary" label="추가" to="/main/post/editor" />
-          <q-btn size="sm" color="primary" label="즐겨찾기" @click="getFavoriteList"/>
+          <q-btn size="sm" color="primary" v-if="isfavorite" label="즐겨찾기" @click="getFavoriteList"/>
+          <q-btn size="sm" color="primary" v-if="!isfavorite" label="포스트 목록" @click="connect"/>
         </div>
       </div>
     </q-card-section>
@@ -38,6 +39,7 @@ export default {
       postList: [],
       post_id: '',
       list_name: '',
+      isfavorite: false
     }
   },
   computed : {
@@ -57,6 +59,7 @@ export default {
     },
     methods: {
         connect: function() {
+            this.isfavorite = !this.isfavorite
             this.$axios.get('http://localhost:8080/post/list',{
                 headers:{
                     "jwt-auth-token": this.token
@@ -97,6 +100,7 @@ export default {
             );
         },
         getFavoriteList: function() {
+            this.isfavorite = !this.isfavorite
             this.$axios.get('http://localhost:8080/post/favorite',{
                 headers:{
                     "jwt-auth-token": this.token

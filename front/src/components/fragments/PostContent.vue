@@ -12,6 +12,9 @@
             <q-menu auto-close>
               <q-list>
                 <q-item clickable>
+                  <q-item-section>즐겨찾기</q-item-section>
+                </q-item>
+                <q-item clickable>
                   <q-item-section>수정하기</q-item-section>
                 </q-item>
                 <q-item clickable>
@@ -70,7 +73,7 @@ export default {
         connect: function() {
             this.post = false
             this.loading = true
-            this.$axios.get('http://localhost:8080/post/'+this.$route.params.id, {
+            this.$axios.get('http://localhost:8080/post/'+this.postId, {
                 headers:{
                     "jwt-auth-token": this.token
                 },
@@ -89,7 +92,41 @@ export default {
         addFavorite: function() {
             this.$axios.post('http://localhost:8080/post/favorite'
             ,JSON.stringify({
-                id : this.$route.params.id
+                id : this.postId
+            }),
+            {
+                headers:{
+                    "jwt-auth-token": this.token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((res) => {
+                console.log(res.data.data);
+            }).catch((e) => {
+                console.error(e);
+            })
+        },
+        updatePost: function(){
+            this.$axios.post('http://localhost:8080/post/update'
+            ,JSON.stringify({
+                id : this.postId
+            }),
+            {
+                headers:{
+                    "jwt-auth-token": this.token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((res) => {
+                console.log(res.data.data);
+            }).catch((e) => {
+                console.error(e);
+            })
+        },
+        deletePost: function(){
+            this.$axios.post('http://localhost:8080/post/delete'
+            ,JSON.stringify({
+                id : this.postId
             }),
             {
                 headers:{

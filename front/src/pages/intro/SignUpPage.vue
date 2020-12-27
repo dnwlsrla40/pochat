@@ -107,6 +107,8 @@ export default {
                     this.triggerNegative(errMsg);
                     return;
                 } else if(res.status){
+                    const Msg = '회원가입에 성공하였습니다!';
+                    this.triggerPositive(Msg);
                     this.$router.push('/')
                 }
             }).catch((e) => {
