@@ -7,7 +7,10 @@
         </div>
         <q-card>
 
-            <div>"This is SignIn Page."</div>
+            <!-- <div>"This is SignIn Page."</div> -->
+          <q-card-section class="text-h6 text-center q-pb-none">
+            LogIn
+          </q-card-section>
 
           <q-form>
             <q-card-section>

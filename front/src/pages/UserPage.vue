@@ -68,8 +68,8 @@
     
   </q-card>
 
-  <change-profile-dialog :show="profileDialog" @cancel="profileDialog = false" @submit="onProfileSubmit"/>
-  <create-friend-dialog :show="friendDialog" @cancel="friendDialog = false" @submit="onFriendSubmit"/>
+  <change-profile-dialog v-if="profileDialog" :show="profileDialog" @cancel="profileDialog = false" @submit="onProfileSubmit"/>
+  <create-friend-dialog v-if="friendDialog" :show="friendDialog" @cancel="friendDialog = false" @submit="onFriendSubmit"/>
 
 </q-page>
 </template>

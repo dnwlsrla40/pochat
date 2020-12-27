@@ -1,7 +1,7 @@
 <template>
   <q-card class="full-height">
     <q-card-section>
-      <span class="text-h5">POST 작성</span>
+      <span class="text-h5">POST {{action}}</span>
     </q-card-section>
 
     <q-card-section class="q-gutter-y-sm" @reset="onReset">
@@ -24,13 +24,13 @@
     <q-card-actions class="q-pa-md flex justify-end">
       <q-btn label="취소" to="/main" />
       <q-btn label="리셋" @click="onReset"/>
-      <q-btn label="작성하기" @click="createPost"/>
+      <q-btn v-if="action=='작성'" label="작성하기" @click="createPost"/>
+      <q-btn v-else label="수정하기" @click="updatePost"/>
     </q-card-actions>
   </q-card>
 </template>
 
 <script>
-
 export default {
 
   name: 'PostEditor',
@@ -40,10 +40,10 @@ export default {
       title: '',
       shortdescription: '',
       body: '',
-      // url: '',
       link: '',
       showAlert: false,
-      errMsg: ''
+      errMsg: '',
+      action : '작성'
     }
   },
   computed : {
@@ -59,8 +59,16 @@ export default {
         } else {
             this.$router.push('/login');
         }
+
+        if(this.$route.query.id) {
+          this.action = '수정'
+          // 그 아이디로 데이터를 불러와서 채워넣으면 되고
+        }
     },
     methods: {
+      updatePost : function () {
+
+      },
         createPost: function() {
             if ( this.title == '' ) {
                 this.showAlert = true;
@@ -96,7 +104,7 @@ export default {
                     var post = res.data.data;
                     console.log("post: " + post);
                     this.$router.push("/main")
-                    this.$emit('create');
+                    this.$emit('postUpdated');
                 }
             }).catch((e) => {
                 console.error(e);

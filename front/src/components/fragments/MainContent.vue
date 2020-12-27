@@ -4,13 +4,13 @@
       <div class="column justify-center full-height">
 
         <div class="col">
-          <q-splitter v-model="splitter" separator-class="bg-purple-3" separator-style="width: 2px" :limits="[0, 100]">
+          <q-splitter v-model="sppliter" separator-class="bg-purple-3" separator-style="width: 2px" :limits="[0, 100]">
             <template v-slot:before>
               <chat-content ref="chatContent" />
             </template>
             
             <template v-slot:after>
-              <post-content />
+              <post-content @postUpdated="$emit('postUpdated');$router.push('/main')" />
             </template>
           </q-splitter>
         </div>
@@ -32,11 +32,29 @@ export default {
   name: 'MainContent',
   data () {
     return {
-      splitter : 50,
+      //sppliter : 50,
       message : ''
     }
   },
 
+  computed : {
+    chatId :function () {
+      return this.$route.params.chatId
+    },
+    postId : function () {
+      return this.$route.params.postId
+    },
+    sppliter : function () {
+      if ( this.chatId < 0 ) return 0;
+      else if ( this.postId < 0 ) return 100;
+      else return 50;
+    }
+  },
+
+  // watch : {
+  //   'chatId' : 'showPostOnly',
+  //   'postId' : 'showChatOnly'
+  // },
   mounted : function () {
 
   },

@@ -5,7 +5,7 @@
       <div class="text-h6">채팅 목록</div>
       <q-space />
       <q-btn icon="add" flat @click="onNewChat" />
-      <new-chat-dialog :show="dialog" @submit="onSubmit" @cancel="onCancel" />
+      <new-chat-dialog v-if="dialog" :show="dialog" @submit="onSubmit" @cancel="onCancel" />
     </q-card-section>
 
     <q-separator />
@@ -13,7 +13,7 @@
     <q-card-section class="no-padding">
 
       <q-list class="scroll" style="height : calc(100vh - 155px);">
-        <q-item clickable v-ripple v-for="(item, index) in chatRoomList" :key="index" :active="active === index" @click="enterChatRoom(item)"  active-class="active">
+        <q-item clickable v-ripple v-for="(item, index) in chatRoomList" :key="index" :active="active === index" @click="enterChatRoom(item, index)"  active-class="active">
           <q-item-section>{{ item.name }}</q-item-section>
         </q-item>
       </q-list>
@@ -84,8 +84,8 @@ export default {
             console.error(e);
         })
     },
-    enterChatRoom: function(item) {
-      this.active = item.chatroom_id;
+    enterChatRoom: function(item, index) {
+      this.active = index;
       // this.$router.push({
       //     path: '/chat/content/'+item.chatroom_id, 
       //   });

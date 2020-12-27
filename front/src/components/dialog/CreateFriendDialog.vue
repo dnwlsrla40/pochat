@@ -1,6 +1,6 @@
 <template>
     <q-dialog v-model="show" persistent>
-        <q-card style="width : 551px;">
+        <q-card style="width : 451px;">
 
             <q-card-section class="text-h5">
                 친구추가

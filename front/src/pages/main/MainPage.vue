@@ -4,8 +4,7 @@
     <chat-list class="col-2" style="min-width : 317px !important;" />
 
     <div class="col" style="min-width : 720px !important;">
-      <router-view />
-       <!-- @create="onCreate" -->
+      <router-view @postUpdated="onPostUpdated" />
     </div>
     
     <post-list ref="postlist" class="col-2" style="min-width : 317px !important;" />
@@ -27,7 +26,7 @@ export default {
     }
   },
   methods : {
-    onCreate : function () {
+    onPostUpdated : function () {
       this.$refs.postlist.connect();
     }
   }

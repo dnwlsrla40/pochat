@@ -8,23 +8,24 @@
         <q-card>
           <q-form>
 
-              <div>"This is SignUp Page."</div>
+            <q-card-section class="text-h6 text-center q-pb-none">
+                SignUp
+            </q-card-section>
 
             <q-card-section class="q-gutter-y-md">
                 <img  id="thumbnailImg" :src="filePath">
                 <q-file label="프로필 이미지" v-model="file" accept=".jpg, image/*" @input="profileChange">
                     <template v-slot:append>
+                        <q-icon v-if="file" name="send" @click.self="profileUpload" class="cursor-pointer" />
                         <q-icon v-if="file" name="close" @click.self="profileRemove" class="cursor-pointer" />
+                        <q-icon v-else name="attachment" @click.stop  class="cursor-pointer" />
                     </template>
                 </q-file>
-                <div class="flex justify-end q-gutter-x-sm">
+                <!-- <div class="flex justify-end q-gutter-x-sm">
                     <q-btn label="프로필 업로드" @click="profileUpload"/>
-                </div>
-            </q-card-section>
-
-            <q-card-section>
-              <q-input label="username" v-model.trim="username"/>
-              <q-input label="password" type="password" v-model.trim="password"/>
+                </div> -->
+                <q-input label="username" v-model.trim="username"/>
+                <q-input label="password" type="password" v-model.trim="password"/>
             </q-card-section>
 
             <q-card-section class="flex justify-center q-gutter-x-md">

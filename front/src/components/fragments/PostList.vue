@@ -20,8 +20,8 @@
 
         <q-item clickable v-ripple v-for="(item, index) in postList" :key="`post-${index}`" :active="active === item.post_id" @click="getPostDetail(item)"  active-class="active">
           <q-item-section>
-            <q-item-label>{{item.title}}</q-item-label>
-            <q-item-label caption lines="2">{{item.short_description}}</q-item-label>
+            <q-item-label class="ellipsis" >{{item.title}}</q-item-label>
+            <q-item-label class="ellipsis" caption lines="2">{{item.short_description}}</q-item-label>
           </q-item-section>
         </q-item>
         
@@ -115,6 +115,7 @@ export default {
                             {
                                 title: res.data.data[i].title,
                                 short_description: res.data.data[i].shortDescription,
+                                post_id: res.data.data[i].id
                             }
                         );
                     }

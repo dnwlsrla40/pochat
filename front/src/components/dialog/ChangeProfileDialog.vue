@@ -1,16 +1,19 @@
 <template>
     <q-dialog v-model="show" persistent>
-        <q-card style="width : 551px;">
+        <q-card style="width : 451px;">
             <q-card-section class="q-gutter-y-md">
                 <img  id="thumbnailImg" :src="filePath">
+
                 <q-file label="프로필 이미지" v-model="file" accept=".jpg, image/*" @input="profileChange">
                     <template v-slot:append>
+                        <q-icon v-if="file" name="send" @click.self="profileUpload" class="cursor-pointer" />
                         <q-icon v-if="file" name="close" @click.self="profileRemove" class="cursor-pointer" />
+                        <q-icon v-else name="attachment" @click.stop  class="cursor-pointer" />
                     </template>
                 </q-file>
-                <div class="flex justify-end q-gutter-x-sm">
+                <!-- <div class="flex justify-end q-gutter-x-sm">
                     <q-btn label="프로필 업로드" @click="profileUpload"/>
-                </div>
+                </div> -->
                 <div class="flex justify-end q-gutter-x-sm">
                     <q-btn label="확인" @click="onSubmit" />
                     <q-btn label="취소" @click="onCancel" />

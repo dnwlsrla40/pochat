@@ -4,7 +4,7 @@
     <q-header elevated>
       <q-toolbar class="bg-purple-4 q-px-lg">
         <q-toolbar-title>
-          <span @click="goMain">PoChat</span>
+          <span @click="goMain" class="cursor-pointer">PoChat</span>
         </q-toolbar-title>
 
         <q-space  />

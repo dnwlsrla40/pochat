@@ -11,14 +11,17 @@
           <q-btn size="sm" color="grey-7" round flat icon="more_vert">
             <q-menu auto-close>
               <q-list>
-                <q-item clickable>
-                  <q-item-section>즐겨찾기</q-item-section>
+                <q-item clickable v-if="!isfavorite">
+                  <q-item-section @click="addFavorite">즐겨찾기</q-item-section>
+                </q-item>
+                <q-item clickable v-if="isfavorite">
+                  <q-item-section @click="addFavorite">즐겨찾기 취소</q-item-section>
                 </q-item>
                 <q-item clickable>
-                  <q-item-section>수정하기</q-item-section>
+                  <q-item-section @click="updatePost">수정하기</q-item-section>
                 </q-item>
                 <q-item clickable>
-                  <q-item-section>삭제하기</q-item-section>
+                  <q-item-section @click="deletePost">삭제하기</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
@@ -29,7 +32,7 @@
 
     <q-separator />
     
-    <q-card-section class="scroll" style="height : calc(100vh - 236px);">
+    <q-card-section class="scroll content" style="height : calc(100vh - 236px);">
       <div v-html="body" />
     </q-card-section>
 
@@ -46,6 +49,7 @@ export default {
             title: '',
             writer: '',
             body: '',
+            isfavorite: null
         }
     },
     computed: {
@@ -85,8 +89,15 @@ export default {
                 this.title = postDetail.title
                 this.writer = postDetail.user.username
                 this.body = postDetail.body
+                this.isfavorite = postDetail.favorite
             }).catch((e) => {
                 console.error(e);
+            })
+        },
+        triggerPositive : function (messages) {
+            this.$q.notify({
+                type: 'positive',
+                message: messages
             })
         },
         addFavorite: function() {
@@ -102,32 +113,39 @@ export default {
             })
             .then((res) => {
                 console.log(res.data.data);
+                if(res.data.status){
+                  if(res.data.data.favorite) {
+                    const messages = "즐겨찾기에 추가되었습니다!"
+                    this.triggerPositive(messages)
+                  } else if(!res.data.data.favorite) {
+                    const messages = "즐겨찾기가 취소되었습니다!"
+                    this.triggerPositive(messages)
+                  }
+                }
             }).catch((e) => {
                 console.error(e);
             })
         },
         updatePost: function(){
-            this.$axios.post('http://localhost:8080/post/update'
-            ,JSON.stringify({
-                id : this.postId
-            }),
-            {
-                headers:{
-                    "jwt-auth-token": this.token,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then((res) => {
-                console.log(res.data.data);
-            }).catch((e) => {
-                console.error(e);
-            })
+            this.$router.push(`/main/post/editor?id=${this.postId}`)
+            // this.$axios.post('http://localhost:8080/post/update'
+            // ,JSON.stringify({
+            //     id : this.postId
+            // }),
+            // {
+            //     headers:{
+            //         "jwt-auth-token": this.token,
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            // .then((res) => {
+            //     console.log(res.data.data);
+            // }).catch((e) => {
+            //     console.error(e);
+            // })
         },
         deletePost: function(){
-            this.$axios.post('http://localhost:8080/post/delete'
-            ,JSON.stringify({
-                id : this.postId
-            }),
+            this.$axios.delete('http://localhost:8080/post/delete/' + this.postId,
             {
                 headers:{
                     "jwt-auth-token": this.token,
@@ -135,7 +153,12 @@ export default {
                 }
             })
             .then((res) => {
-                console.log(res.data.data);
+                console.log("==========================" + res.data);
+                if(res.data.status){
+                  const messages = "post가 삭제되었습니다!"
+                  this.triggerPositive(messages)
+                  this.$emit('postUpdated')
+                }
             }).catch((e) => {
                 console.error(e);
             })
@@ -143,3 +166,12 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.content {
+  width : 100%;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: normal;
+}
+</style>>

@@ -72,6 +72,7 @@ export default {
     },
     onSubmit : function () {
       console.log("roomMember: " + JSON.stringify(this.select));
+      this.$q.loading.show()
       this.$axios.post('http://localhost:8080/chatroom',JSON.stringify(
       {
           name : this.chatRoomName,
@@ -87,8 +88,10 @@ export default {
           console.log(res.data.data)
           res.data.data.chatroom_id = res.data.data.id
           this.$emit('submit', res.data.data)
+          this.$q.loading.hide()
       }).catch((e) => {
           console.error(e)
+          this.$q.loading.hide()
       })
     },
     onCancel : function () {

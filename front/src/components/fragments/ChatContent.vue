@@ -1,11 +1,27 @@
 <template>
   <q-card class="bg-purple-1 full-height" flat square>
-    <q-card-section class="bg-deep-purple-1" >
-      <span class="text-h6 text-overflow-hidden">채팅상대</span>
+    <q-card-section class="bg-deep-purple-1 row" >
+      <div class="col text-h6 text-overflow-hidden">채팅상대</div>
+
+      <div class="col-auto">
+          <q-btn size="sm" color="grey-7" round flat icon="more_vert">
+            <q-menu auto-close>
+              <q-list>
+                <q-item clickable>
+                  <q-item-section >인원추가</q-item-section>
+                </q-item>
+                <q-item clickable>
+                  <q-item-section >삭제하기</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </div>
+      </div>
     </q-card-section>
 
     <q-separator />
-    <q-card-section ref="scollArea" class="scroll" style="height : calc(100vh - 236px); min-width : 320px; padding-bottom : 68px;">
+    <q-card-section ref="scollArea" class="scroll" style="height : calc(100vh - 236px); min-width : 320px;">
       <template v-for="(item,index) in recvList" >
             
         <template v-if="item.type=='newUser'">
@@ -65,6 +81,9 @@ export default {
   watch: {
     'chatId' : 'onChangeChatId',
   },
+  updated : function () {
+    this.$refs.scollArea.$el.scrollTop = this.$refs.scollArea.$el.scrollHeight;
+  },
   methods : {
     onMessageReceived(payload){
 
@@ -80,11 +99,7 @@ export default {
         console.log("=======================받았다!!!!!!!!!!!!!!!!!!!!")
         this.recvList.push(sub_message);
     },
-    updated () {
-      this.$nextTick(() => {
-        this.$refs.scollArea.$el.scrollTop = this.$refs.scollArea.$el.scrollHeight;
-      })
-    },
+    
     onCreateConnection: function(){
       console.log('chatid 업데이트됨')
       if(this.stompClient) {
