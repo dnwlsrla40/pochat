@@ -113,6 +113,22 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
+    @Transactional
+    public Post update(PostDto.PostUpdateRequestDto requestDto, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(NoSuchElementException::new);
+
+        post.update(requestDto.getTitle(), requestDto.getShortDescription(), requestDto.getBody(), requestDto.getIsPrivate());
+
+        return post;
+    }
+
+    @Transactional
+    public void delete(Long postId) {
+        Post deletedPost = postRepository.findById(postId).orElseThrow(NoSuchElementException::new);
+        System.out.println("deletedPost: " + deletedPost);
+        postRepository.delete(deletedPost);
+    }
+
 //    // url 중복 체크
 //    public Boolean checkUrlOverlap(String url){
 //        return postRepository.findByUrl(url) != null ? true : false;

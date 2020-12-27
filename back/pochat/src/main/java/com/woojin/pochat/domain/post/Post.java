@@ -65,4 +65,11 @@ public class Post extends BaseTimeEntity {
         this.shortDescription = this.shortDescription == null ? (this.body.length() > 70 ? this.body.substring(0,70) : this.body) : this.shortDescription;
         this.favorite = this.favorite == null ? false : this.favorite;
     }
+
+    public void update(String title, String shortDescription, String body, Boolean isPrivate){
+        this.title = title;
+        this.shortDescription = shortDescription;
+        this.body = body;
+        this.isPrivate = isPrivate;
+    }
 }

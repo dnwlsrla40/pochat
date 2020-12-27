@@ -13,20 +13,17 @@ public class PostDto {
         private String title;
         private String shortDescription;
         private String body;
-        private String url;
         private Boolean isPrivate;   // 그룹원 or 개인만
 
-        public PostCreateRequestDto(String title, String shortDescription, String body, String url, Boolean isPrivate) {
+        public PostCreateRequestDto(String title, String shortDescription, String body, Boolean isPrivate) {
             Assert.notNull(title, "title must be not null");
             Assert.notNull(shortDescription, "shortDescription must be not null");
             Assert.notNull(body, "body must be not null");
-            Assert.notNull(url, "url must be not null");
             Assert.notNull(isPrivate, "isPrivate must be not null");
 
             this.title = title;
             this.shortDescription = shortDescription;
             this.body = body;
-            this.url = url;
             this.isPrivate = isPrivate;
         }
     }
@@ -36,16 +33,13 @@ public class PostDto {
     public static class PostCreateResponseDto{
         private String title;
         private String body;
-        private String url;
 
         public PostCreateResponseDto(String title, String body, String url) {
             Assert.notNull(title, "title must be not null");
             Assert.notNull(body, "body must be not null");
-            Assert.notNull(url, "url must be not null");
 
             this.title = title;
             this.body = body;
-            this.url = url;
         }
     }
 
@@ -58,6 +52,28 @@ public class PostDto {
             Assert.notNull(id, "id must be not null");
 
             this.id = Long.parseLong(id);
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    public static class PostUpdateRequestDto{
+        private String title;
+        private String shortDescription;
+        private String body;
+        private Boolean isPrivate;
+
+
+        public PostUpdateRequestDto(String title, String body, String shortDescription, Boolean isPrivate) {
+            Assert.notNull(title, "title must be not null");
+            Assert.notNull(body, "body must be not null");
+            Assert.notNull(shortDescription, "shortDescription must be not null");
+            Assert.notNull(isPrivate, "isPrivate must be not null");
+
+            this.title = title;
+            this.body = body;
+            this.shortDescription = shortDescription;
+            this.isPrivate = isPrivate;
         }
     }
 

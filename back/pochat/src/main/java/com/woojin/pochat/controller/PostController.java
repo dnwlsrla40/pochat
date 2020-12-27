@@ -42,7 +42,7 @@ public class PostController {
         parameter
          - title
          - body
-         - url
+         - shortDescription
          - isPrivate
      */
     @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -160,6 +160,56 @@ public class PostController {
 
             resultMap.put("status", true);
             resultMap.put("data", postDetail);
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+        method
+         - post update
+        parameter
+         - title
+         - body
+         - shortDescription
+         - isPrivate
+     */
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/update/{postId}")
+    public ResponseEntity<Map<String, Object>> update(@RequestBody PostDto.PostUpdateRequestDto requestDto, Long postId) {
+        System.out.println("requestDto:" + requestDto);
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            Post updatedPost = postService.update(requestDto, postId);
+            resultMap.put("status", true);
+            resultMap.put("data", updatedPost);
+            // 요청 성공 + 새로운 리소스 생성
+            status = HttpStatus.CREATED;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+        method
+         - post 삭제
+     */
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<Map<String, Object>> delete(Long postId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            postService.delete(postId);
+            resultMap.put("status", true);
             status = HttpStatus.OK;
         } catch(RuntimeException e) {
             log.error("", e);

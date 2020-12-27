@@ -131,7 +131,7 @@ public class FriendService {
         System.out.println("cancelUSer: " + requestDto.getCancelUser());
         System.out.println("canceledUSer: " + requestDto.getCanceledUser());
         Friend cancelFriend = friendRepository.findAllBySenderNameAndRecipientName(requestDto.getCancelUser(), requestDto.getCanceledUser());
-        System.out.println(cancelFriend);
+        System.out.println("canceledFriend: " + cancelFriend);
         friendRepository.delete(cancelFriend);
     }
 }
