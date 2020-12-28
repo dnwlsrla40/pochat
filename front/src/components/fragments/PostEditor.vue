@@ -19,8 +19,6 @@
 
     </q-card-section>
 
-    <q-dialog variant="danger" :show="showAlert">{{ errMsg }}</q-dialog>
-
     <q-card-actions class="q-pa-md flex justify-end">
       <q-btn label="취소" to="/main" />
       <q-btn label="리셋" @click="onReset"/>
@@ -41,8 +39,6 @@ export default {
       shortdescription: '',
       body: '',
       link: '',
-      showAlert: false,
-      errMsg: '',
       action : '작성'
     }
   },
@@ -52,6 +48,9 @@ export default {
     },
     login_user : function () {
       return sessionStorage.getItem("login_user");
+    },
+    postId : function(){
+      return this.$route.query.id;
     }
   },
     mounted(){
@@ -59,39 +58,67 @@ export default {
         } else {
             this.$router.push('/login');
         }
-
         if(this.$route.query.id) {
           this.action = '수정'
           // 그 아이디로 데이터를 불러와서 채워넣으면 되고
         }
     },
     methods: {
+      triggerPositive : function (messages) {
+        this.$q.notify({
+            type: 'positive',
+            message: messages
+        })
+      },
+      triggerNegative : function(messages) {
+        this.$q.notify({
+            type: 'negative',
+            message: messages
+        })
+      },
       updatePost : function () {
-
+        this.$axios.post('http://localhost:8080/post/update'
+            ,JSON.stringify({
+                id : this.postId,
+                title : this.title,
+                body : this.body,
+                shortDescription: this.shortdescription,
+                isPrivate: this.scope
+            }),
+            {
+                headers:{
+                    "jwt-auth-token": this.token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((res) => {
+                console.log(res.data.data);
+                if(res.data.status){
+                  const Msg = 'post 수정에 성공하였습니다!';
+                  this.triggerPositive(Msg);
+                  this.$router.push("/main");
+                  this.$emit('postUpdated');
+                }
+            }).catch((e) => {
+                console.error(e);
+            })
       },
         createPost: function() {
             if ( this.title == '' ) {
-                this.showAlert = true;
-                this.errMsg = 'Please enter post title';
+                const errMsg = 'Please enter post title';
+                this.triggerNegative(errMsg);
                 return;
             }
             if ( this.body == '' ) {
-                this.showAlert = true;
-                this.errMsg = 'Please enter post body';
+                const errMsg = 'Please enter post body';
+                this.triggerNegative(errMsg);
                 return;
             }
-            // if ( this.url == '' ) {
-            //     this.showAlert = true;
-            //     this.errMsg = 'Please enter post url';
-            //     return;
-            // }
-            this.showAlert = false;
 
             this.$axios.post('http://localhost:8080/post/create',{
                 title: this.title,
                 body: this.body,
                 shortDescription: this.shortdescription,
-                url: "test",
                 isPrivate: this.scope
             },{
                 headers:{
@@ -103,6 +130,8 @@ export default {
                 if(res.data.status){
                     var post = res.data.data;
                     console.log("post: " + post);
+                    const Msg = 'post 생성에 성공하였습니다!';
+                    this.triggerPositive(Msg);
                     this.$router.push("/main")
                     this.$emit('postUpdated');
                 }
@@ -116,7 +145,6 @@ export default {
             this.title = ''
             this.shortdescription = ''
             this.body = ''
-            this.url = ''
         }
     }
 }

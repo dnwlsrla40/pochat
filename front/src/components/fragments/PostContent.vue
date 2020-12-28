@@ -128,21 +128,6 @@ export default {
         },
         updatePost: function(){
             this.$router.push(`/main/post/editor?id=${this.postId}`)
-            // this.$axios.post('http://localhost:8080/post/update'
-            // ,JSON.stringify({
-            //     id : this.postId
-            // }),
-            // {
-            //     headers:{
-            //         "jwt-auth-token": this.token,
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then((res) => {
-            //     console.log(res.data.data);
-            // }).catch((e) => {
-            //     console.error(e);
-            // })
         },
         deletePost: function(){
             this.$axios.delete('http://localhost:8080/post/delete/' + this.postId,

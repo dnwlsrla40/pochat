@@ -16,7 +16,6 @@
               </q-list>
             </q-menu>
           </q-btn>
-        </div>
       </div>
     </q-card-section>
 
@@ -73,7 +72,6 @@ export default {
   mounted(){
     if(this.token != null){
       this.onChangeChatId();
-      
     } else {
         this.$router.push('/');
     }
@@ -102,6 +100,7 @@ export default {
     
     onCreateConnection: function(){
       console.log('chatid 업데이트됨')
+      console.log('this.stompClient : ' + this.stompClient + "this.currentChatId : " + this.currentChatId)
       if(this.stompClient) {
         this.stompClient.unsubscribe(this.currentChatId);
       }
