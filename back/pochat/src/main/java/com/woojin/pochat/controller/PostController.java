@@ -44,6 +44,7 @@ public class PostController {
          - body
          - shortDescription
          - isPrivate
+         - chatId
      */
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/create")
@@ -64,73 +65,23 @@ public class PostController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
-
-    /*
-        method
-         - 즐겨찾기 된 post 목록
-     */
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/favorite")
-    public ResponseEntity<Map<String, Object>> getPostFavoriteList() {
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
-        try{
-            List<Post> postFavoriteList = postService.getPostFavoriteList();
-            resultMap.put("status", true);
-            resultMap.put("data", postFavoriteList);
-            status = HttpStatus.OK;
-        } catch(RuntimeException e) {
-            log.error("", e);
-            resultMap.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
-    }
-
-    /*
-        method
-         - post에 즐겨찾기 업데이트
-        parameter
-         - 즐겨찾기 추가 할 title
-         - 즐겨찾기 상태 값
-        response
-         - status : 201 Created 즐겨찾기 상태 변경
-         - body : 즐겨찾기한 post
-     */
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PostMapping("/favorite")
-    public ResponseEntity<Map<String, Object>> updateFavorite(@RequestBody PostDto.PostUpdateFavoriteRequestDto requestDto){
-        System.out.println("requestDto: " + requestDto);
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
-        try{
-            Post favoritePost = postService.updateFavorite(requestDto);
-
-            resultMap.put("status", true);
-            resultMap.put("data", favoritePost);
-            status = HttpStatus.CREATED;
-        } catch(RuntimeException e) {
-            log.error("", e);
-            resultMap.put("message", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
-    }
     
     /*
         method
          - post list 제공
+        parameter
+         - chatId
         response
          - status : 200 요청 성공
          - body : post list 제공
      */
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getPostList(){
+    @GetMapping("/list/{chatId}")
+    public ResponseEntity<Map<String, Object>> getPostList(@PathVariable Long chatId){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{
-            List<Post> postList = postService.getPostList();
+            List<Post> postList = postService.getPostList(chatId);
 
             resultMap.put("status", true);
             resultMap.put("data", postList);

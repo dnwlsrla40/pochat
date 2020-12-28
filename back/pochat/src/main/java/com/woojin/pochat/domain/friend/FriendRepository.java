@@ -27,8 +27,4 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query("select case when count(f)> 0 then true else false end from Friend f where f.sender=?1 and f.recipient=?2")
     Boolean existsBySenderAndRecipient(User sender, User recipient);
-
-//    @Query("select f from Friend as f, ChatRoomMember as crm where crm.chatRoom=?1 and crm.user<>f.sender and crm.user<>f.recipient")
-//    @Query("select f from Friend as f, (ChatRoomMember as crm) where (crm.chatRoom=?1 and crm.user<>f.sender and crm.user<>f.recipient)")
-//    List<Friend> findFriendNotChatRoomMember(ChatRoom chatRoom);
 }

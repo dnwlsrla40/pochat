@@ -1,5 +1,7 @@
 package com.woojin.pochat.service;
 
+import com.woojin.pochat.domain.chatroom.ChatRoom;
+import com.woojin.pochat.domain.chatroom.ChatRoomRepository;
 import com.woojin.pochat.domain.post.Post;
 import com.woojin.pochat.domain.post.PostRepository;
 import com.woojin.pochat.domain.user.User;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -22,8 +25,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
-    @Autowired
+    private final ChatRoomRepository chatRoomRepository;
     private final JwtService jwtService;
 
     /*
@@ -34,6 +36,7 @@ public class PostService {
          - body = 사용자 입력
          - url = 시스템에서 title 값 + 중복시 제거할 slug
          - isPrivate = 그룹원에게 보일 지 자신에게만 보일 지 사용자 입력
+         - chatId = 채팅방 Id
      */
     @Transactional
     public Post create(PostDto.PostCreateRequestDto requestDto) {
@@ -46,11 +49,8 @@ public class PostService {
 
         User writeUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
 
-//        // url 중복 체크
-//        String newUrl = requestDto.getUrl();
-//        if(checkUrlOverlap(newUrl)){
-//            newUrl = createUrlSlug(newUrl);
-//        }
+        // 접속한 채팅방 가져오기
+        ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getChatId()).orElseThrow(NoSuchElementException::new);
         
         Post post = Post.builder()
                 .title(requestDto.getTitle())
@@ -58,50 +58,41 @@ public class PostService {
                 .shortDescription(requestDto.getShortDescription())
                 .isPrivate(requestDto.getIsPrivate())
                 .user(writeUser)
+                .chatRoom(chatRoom)
                 .build();
 
         return postRepository.save(post);
-    }
-    
-    /*
-        method
-         - 즐겨찾기 업데이트
-        Parameter
-         - 즐겨찾기 될 post title
-         - post의 즐겨찾기 상태
-     */
-    @Transactional
-    public Post updateFavorite(PostDto.PostUpdateFavoriteRequestDto requestDto){
-        Post post = postRepository.findById(requestDto.getId()).orElseThrow(NoSuchElementException::new);
-        post.setFavorite(!post.getFavorite());
-        return post;
-    }
-
-    /*
-        method
-         - 즐겨찾기 포스트 목록 제공
-     */
-    @Transactional
-    public List<Post> getPostFavoriteList() {
-        // 접속중인 username 가져오기
-        Map map = (Map)jwtService.get().get("User");
-        String username = (String)map.get("username");
-
-        return postRepository.findAllFavoritePostByUsername(username);
     }
 
     /*
         method
          - post list 제공
+        Parameter
+         - 채팅방 id
      */
     @Transactional
-    public List<Post> getPostList() {
+    public List<Post> getPostList(Long chatId) {
 
         // 접속중인 username 가져오기
         Map map = (Map)jwtService.get().get("User");
         String username = (String)map.get("username");
-        
-        return postRepository.findAllByUsername(username);
+
+        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+
+        // 접속한 채팅방 가져오기
+//        ChatRoom chatRoom = chatRoomRepository.findById(chatId).orElseThrow(NoSuchElementException::new);
+
+        List<Post> postList = postRepository.findAllByChatRoom(chatId);
+        List<Post> newPostList = new ArrayList<>();
+
+        for (int i = 0; i < postList.size(); i++) {
+            Post currentPost = postList.get(i);
+            if(currentPost.getIsPrivate() && loginUser.equals(currentPost.getUser())){
+                newPostList.add(currentPost);
+            } else if(!currentPost.getIsPrivate())
+                newPostList.add(currentPost);
+        }
+        return newPostList;
     }
 
     /*
@@ -132,21 +123,5 @@ public class PostService {
         System.out.println("deletedPost: " + deletedPost);
         postRepository.delete(deletedPost);
     }
-
-//    // url 중복 체크
-//    public Boolean checkUrlOverlap(String url){
-//        return postRepository.findByUrl(url) != null ? true : false;
-//    }
-//
-//    // url 중복 시 urlSlug 생성
-//    public String createUrlSlug(String url){
-//        String urlSlug;
-//        String newUrl;
-//        do {
-//            urlSlug = RandomStringUtils.randomAlphanumeric(5);
-//            newUrl = url+"-"+urlSlug;
-//        }while(postRepository.findByUrl(newUrl) != null);
-//        return newUrl;
-//    }
 
 }

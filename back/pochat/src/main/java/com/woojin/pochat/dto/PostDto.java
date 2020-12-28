@@ -14,17 +14,20 @@ public class PostDto {
         private String shortDescription;
         private String body;
         private Boolean isPrivate;   // 그룹원 or 개인만
+        private Long chatId;
 
-        public PostCreateRequestDto(String title, String shortDescription, String body, Boolean isPrivate) {
+        public PostCreateRequestDto(String title, String shortDescription, String body, Boolean isPrivate, String chatId) {
             Assert.notNull(title, "title must be not null");
             Assert.notNull(shortDescription, "shortDescription must be not null");
             Assert.notNull(body, "body must be not null");
             Assert.notNull(isPrivate, "isPrivate must be not null");
+            Assert.notNull(chatId, "chatId must be not null");
 
             this.title = title;
             this.shortDescription = shortDescription;
             this.body = body;
             this.isPrivate = isPrivate;
+            this.chatId = Long.parseLong(chatId);
         }
     }
 
@@ -40,18 +43,6 @@ public class PostDto {
 
             this.title = title;
             this.body = body;
-        }
-    }
-
-    @NoArgsConstructor
-    @Data
-    public static class PostUpdateFavoriteRequestDto{
-        private Long id;
-
-        public PostUpdateFavoriteRequestDto(String id) {
-            Assert.notNull(id, "id must be not null");
-
-            this.id = Long.parseLong(id);
         }
     }
 
