@@ -23,7 +23,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(resourcesUriPath + "/**")
                 .addResourceLocations("file:///" + resourcesLocation);
-
     }
 
     private static final String[] EXCLUDE_PATHS = {
@@ -31,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
             "/signup/**",
             "/error/**",
             "/img/**",
-            "/thumbnail/**"
+            "/thumbnail/**",
+//            "/chatroommember/delete/**"
     };
 
     @Autowired

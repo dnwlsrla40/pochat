@@ -19,7 +19,6 @@ public class ChatRoomDto {
         @Builder
         public ChatRoomCreateRequestDto(String name, List<String> roomMember){
             this.name = name;
-            System.out.println("roomMember: " + roomMember);
             this.roomMember = roomMember;
         }
     }

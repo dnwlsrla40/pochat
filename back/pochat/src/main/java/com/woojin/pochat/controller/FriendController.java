@@ -184,4 +184,26 @@ public class FriendController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+
+    /*
+        method
+         - chatroom에 추가 할 새로운 friend 조회
+     */
+//    @CrossOrigin(origins = "*", allowedHeaders = "*")
+//    @GetMapping("/friend/accept/{id}")
+//    public ResponseEntity<Map<String, Object>> getFriendAcceptList(@PathVariable Long id) {
+//        Map<String, Object> resultMap = new HashMap<>();
+//        HttpStatus status = null;
+//        try{
+//            List<Friend> memberList = friendService.getNewMemberList(id);
+//            resultMap.put("status", true);
+//            resultMap.put("data", memberList);
+//            status = HttpStatus.OK;
+//        } catch(RuntimeException e) {
+//            log.error("", e);
+//            resultMap.put("message", e.getMessage());
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//        }
+//        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+//    }
 }

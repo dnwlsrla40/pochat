@@ -1,5 +1,6 @@
 package com.woojin.pochat.domain.friend;
 
+import com.woojin.pochat.domain.chatroom.ChatRoom;
 import com.woojin.pochat.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,8 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query("select case when count(f)> 0 then true else false end from Friend f where f.sender=?1 and f.recipient=?2")
     Boolean existsBySenderAndRecipient(User sender, User recipient);
+
+//    @Query("select f from Friend as f, ChatRoomMember as crm where crm.chatRoom=?1 and crm.user<>f.sender and crm.user<>f.recipient")
+//    @Query("select f from Friend as f, (ChatRoomMember as crm) where (crm.chatRoom=?1 and crm.user<>f.sender and crm.user<>f.recipient)")
+//    List<Friend> findFriendNotChatRoomMember(ChatRoom chatRoom);
 }

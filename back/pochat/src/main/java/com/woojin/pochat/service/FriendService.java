@@ -1,5 +1,7 @@
 package com.woojin.pochat.service;
 
+import com.woojin.pochat.domain.chatroom.ChatRoom;
+import com.woojin.pochat.domain.chatroom.ChatRoomRepository;
 import com.woojin.pochat.domain.friend.Friend;
 import com.woojin.pochat.domain.friend.FriendRepository;
 import com.woojin.pochat.domain.user.User;
@@ -25,8 +27,7 @@ public class FriendService {
 
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
-
-    @Autowired
+    private final ChatRoomRepository chatRoomRepository;
     private final JwtService jwtService;
 
     /*
@@ -66,8 +67,8 @@ public class FriendService {
     }
 
     /*
-    method function
-     - friend 수락
+        method function
+         - friend 수락
     */
     @Transactional
     public Friend friendAccept(FriendDto.FriendAcceptRequestDto requestDto) {
@@ -134,4 +135,25 @@ public class FriendService {
         System.out.println("canceledFriend: " + cancelFriend);
         friendRepository.delete(cancelFriend);
     }
+
+    /*
+        method function
+         - chatRoomMember가 될 수 있는 친구 리스트 조회
+        Parameter
+         - id = 채팅방 id
+     */
+//    @Transactional
+//    public List<Friend> getNewMemberList(Long id) {
+//
+//        // 접속중인 username 가져오기
+//        Map map = (Map)jwtService.get().get("User");
+//        String username = (String)map.get("username");
+//
+//        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+//
+//        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(NoSuchElementException::new);
+//
+//        System.out.println(friendRepository.findFriendNotChatRoomMember(chatRoom));
+//        return friendRepository.findFriendNotChatRoomMember(chatRoom);
+//    }
 }

@@ -80,7 +80,7 @@ public class ChatRoomService {
             chatRoomMember = ChatRoomMember.builder()
                     .user(Member)
                     .chatRoom(chatRoom)
-                    .build();;
+                    .build();
             chatRoomMemberRepository.save(chatRoomMember);
         }
 
@@ -105,8 +105,6 @@ public class ChatRoomService {
         admin.declareBinding(binding);
 
         container.setQueueNames(queue.getName());
-        System.out.println("======================================queue 연결성공");
         container.setMessageListener(new MessageListenerAdapter(listener, "processMessage"));
-        System.out.println("========================================Listener 연결성공");
     }
 }

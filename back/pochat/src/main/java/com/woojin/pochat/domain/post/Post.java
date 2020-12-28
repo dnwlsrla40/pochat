@@ -39,7 +39,7 @@ public class Post extends BaseTimeEntity {
     private Boolean favorite;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "writer", nullable = false)
     private User user;
 
     @Builder
