@@ -5,9 +5,9 @@
       <div class="flex justify-between items-center">
         <span class="text-h6">{{list_name}} 목록</span>
         <div class="q-gutter-x-sm">
-          <q-btn size="sm" color="primary" label="추가" to="/main/post/editor" />
-          <q-btn size="sm" color="primary" v-if="isfavorite" label="즐겨찾기" @click="getFavoriteList"/>
-          <q-btn size="sm" color="primary" v-if="!isfavorite" label="포스트 목록" @click="connect"/>
+          <q-btn size="sm" color="primary" label="추가" @click="onCreate"/>
+          <q-btn size="sm" color="primary" v-if="isPostLike" label="즐겨찾기" @click="getPostLikeList"/>
+          <q-btn size="sm" color="primary" v-if="!isPostLike" label="포스트 목록" @click="connect"/>
         </div>
       </div>
     </q-card-section>
@@ -38,8 +38,8 @@ export default {
       active : -1,
       postList: [],
       post_id: '',
-      list_name: '',
-      isfavorite: false
+      list_name: '포스트',
+      isPostLike: true
     }
   },
   computed : {
@@ -48,7 +48,13 @@ export default {
     },
     login_user : function () {
       return sessionStorage.getItem("login_user");
+    },
+    chatId : function() {
+      return this.$route.params.chatId;
     }
+  },
+  watch: {
+      'chatId': 'connect'
   },
   mounted(){
         if(this.token != null && this.token.length > 0){
@@ -59,8 +65,9 @@ export default {
     },
     methods: {
         connect: function() {
-            this.isfavorite = !this.isfavorite
-            this.$axios.get('http://localhost:8080/post/list',{
+          if(this.postId == undefined || this.postId < 0) return;
+            this.isPostLike = true
+            this.$axios.get('http://localhost:8080/post/list/' + this.chatId,{
                 headers:{
                     "jwt-auth-token": this.token
                 }
@@ -99,9 +106,9 @@ export default {
               }
             );
         },
-        getFavoriteList: function() {
-            this.isfavorite = !this.isfavorite
-            this.$axios.get('http://localhost:8080/post/favorite',{
+        getPostLikeList: function() {
+            this.isPostLike = false
+            this.$axios.get('http://localhost:8080/postlike/' + this.chatId,{
                 headers:{
                     "jwt-auth-token": this.token
                 },
@@ -123,6 +130,14 @@ export default {
             }).catch((e) => {
                 console.error(e);
             })
+        },
+        onCreate : function () {
+          if (this.chatId > -1){
+            this.$router.push({name : 'posteditor'})
+          }
+          else {
+            // this.q .notify
+          }
         }
     }
 }

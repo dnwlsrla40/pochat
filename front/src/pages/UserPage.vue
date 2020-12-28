@@ -194,7 +194,7 @@ export default {
               if(res.data.status){
                   const messages = "친구 요청을 수락하였습니다!"
                   this.triggerPositive(messages)
-                  this.friendRequestList.pop(item)
+                  this.friendRequestList.splice(this.friendRequestList.indexOf(item), 1);
                   this.friendAcceptList = []
                   this.getFriendAcceptList();
               }
@@ -289,7 +289,7 @@ export default {
               if(res.data.status){
                   const messages = "요청이 취소되었습니다!"
                   this.triggerPositive(messages)
-                  this.friendSendList.pop(item);
+                  this.friendSendList.splice(this.friendSendList.indexOf(item), 1);
               }
           }).catch((e) => {
               console.error(e);

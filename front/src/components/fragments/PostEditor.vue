@@ -49,18 +49,37 @@ export default {
     login_user : function () {
       return sessionStorage.getItem("login_user");
     },
-    postId : function(){
+    postId : function() {
       return this.$route.query.id;
+    },
+    chatId : function() {
+      return this.$route.params.chatId;
     }
   },
     mounted(){
         if(this.token != null && this.token.length > 0){
+          console.log("=========================================" + this.chatId)
         } else {
             this.$router.push('/login');
         }
         if(this.$route.query.id) {
           this.action = '수정'
           // 그 아이디로 데이터를 불러와서 채워넣으면 되고
+          this.$axios.get('http://localhost:8080/post/'+this.postId, {
+              headers:{
+                  "jwt-auth-token": this.token
+              },
+          })
+          .then((res) => {
+              const postDetail = res.data.data
+              console.log(postDetail)
+              this.title = postDetail.title
+              this.body = postDetail.body
+              this.shortdescription = postDetail.shortDescription
+              this.scope = postDetail.isPrivate
+          }).catch((e) => {
+              console.error(e);
+          })
         }
     },
     methods: {
@@ -96,7 +115,7 @@ export default {
                 if(res.data.status){
                   const Msg = 'post 수정에 성공하였습니다!';
                   this.triggerPositive(Msg);
-                  this.$router.push("/main");
+                  this.$router.go(-1);
                   this.$emit('postUpdated');
                 }
             }).catch((e) => {
@@ -119,7 +138,8 @@ export default {
                 title: this.title,
                 body: this.body,
                 shortDescription: this.shortdescription,
-                isPrivate: this.scope
+                isPrivate: this.scope,
+                chatId : this.chatId
             },{
                 headers:{
                     "jwt-auth-token": this.token
@@ -132,7 +152,8 @@ export default {
                     console.log("post: " + post);
                     const Msg = 'post 생성에 성공하였습니다!';
                     this.triggerPositive(Msg);
-                    this.$router.push("/main")
+                    // this.$router.push("/main")
+                    this.$router.go(-1)
                     this.$emit('postUpdated');
                 }
             }).catch((e) => {

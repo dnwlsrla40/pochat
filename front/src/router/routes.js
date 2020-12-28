@@ -17,10 +17,10 @@ const routes = [
         path: '',
         component: () => import('pages/main/MainPage.vue'),
         children : [
-          // {
-          //   path : 'content',
-          //   component: () => import('components/fragments/MainContent.vue')
-          // },
+          {
+            path : '',
+            component: () => import('components/fragments/NoContent.vue')
+          },
           {
             name : 'content',
             path : 'content/:chatId/:postId',
@@ -28,7 +28,8 @@ const routes = [
             //params : {chatId : -1, postId : -1}
           },
           {
-            path : 'post/editor',
+            name : 'posteditor',
+            path : 'editor/:chatId',
             component: () => import('components/fragments/PostEditor.vue')
           }
         ]

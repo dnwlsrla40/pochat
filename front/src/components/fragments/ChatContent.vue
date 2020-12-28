@@ -1,17 +1,17 @@
 <template>
   <q-card class="bg-purple-1 full-height" flat square>
-    <q-card-section class="bg-deep-purple-1 row" >
-      <div class="col text-h6 text-overflow-hidden">채팅상대</div>
+    <q-card-section class="bg-deep-purple-1 row justify-between" >
+      <div class="col-auto text-h6 text-overflow-hidden">채팅상대</div>
 
       <div class="col-auto">
           <q-btn size="sm" color="grey-7" round flat icon="more_vert">
             <q-menu auto-close>
               <q-list>
                 <q-item clickable>
-                  <q-item-section >인원추가</q-item-section>
+                  <q-item-section @click="onAddFriend">인원추가</q-item-section>
                 </q-item>
                 <q-item clickable>
-                  <q-item-section >삭제하기</q-item-section>
+                  <q-item-section @click="deleteChatRoom">나가기</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
@@ -41,21 +41,26 @@
         />
       </template>
     </q-card-section>
+
+    <add-friend-dialog v-if="addFriendDialog" :show="addFriendDialog" @cancel="addFriendDialog = false" @submit="AddFriendSubmit"/>
   </q-card>
 </template>
 
 <script>
+import AddFriendDialog from 'src/components/dialog/AddFriendDialog.vue'
 import Stomp from 'webstomp-client'
 import SockJs from 'sockjs-client'
 
 export default {
   name: 'ChatContent',
+  components : {AddFriendDialog},
   data() {
     return {
       username: this.login_user,
       message: "",
       recvList: [],
-      currentChatId: -1
+      currentChatId: -1,
+      addFriendDialog : false
     }
   },
   computed : {
@@ -83,6 +88,12 @@ export default {
     this.$refs.scollArea.$el.scrollTop = this.$refs.scollArea.$el.scrollHeight;
   },
   methods : {
+    triggerPositive : function (messages) {
+      this.$q.notify({
+        type: 'positive',
+        message: messages
+      })
+    },
     onMessageReceived(payload){
 
         console.log("payload: ");
@@ -97,7 +108,6 @@ export default {
         console.log("=======================받았다!!!!!!!!!!!!!!!!!!!!")
         this.recvList.push(sub_message);
     },
-    
     onCreateConnection: function(){
       console.log('chatid 업데이트됨')
       console.log('this.stompClient : ' + this.stompClient + "this.currentChatId : " + this.currentChatId)
@@ -184,6 +194,32 @@ export default {
       }).catch((e) => {
         console.error(e);
       })
+    },
+    deleteChatRoom: function () {
+        this.$axios.delete(
+            'http://localhost:8080/chatroommember/delete/' + this.chatId,
+            {
+                headers: {
+                    "jwt-auth-token":this.token,
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        ).then((res) => {
+            const messages = "채팅방을 나갔습니다!"
+            this.triggerPositive(messages)
+            console.log(res.data)
+            this.$router.push("/main")
+            this.$emit('chatRoomUpdated', this.chatId);
+        }).catch((e) => {
+            console.error(e);
+        })
+        },
+        onAddFriend: function () {
+        this.addFriendDialog = true;
+        },
+        AddFriendSubmit: function(){
+            this.friendDialog = false;
     }
   }
 }

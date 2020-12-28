@@ -6,11 +6,11 @@
         <div class="col">
           <q-splitter v-model="sppliter" separator-class="bg-purple-3" separator-style="width: 2px" :limits="[0, 100]">
             <template v-slot:before>
-              <chat-content ref="chatContent" />
+              <chat-content @chatRoomUpdated="(payload)=>$emit('chatRoomUpdated',payload)" ref="chatContent" />
             </template>
             
             <template v-slot:after>
-              <post-content @postUpdated="$emit('postUpdated');$router.push('/main')" />
+              <post-content @postUpdated="$emit('postUpdated');$router.go(-1)" />
             </template>
           </q-splitter>
         </div>
@@ -60,8 +60,10 @@ export default {
   },
   methods : {
     onMessageSend : function () {
-      this.$refs.chatContent.onMessageSend(this.message)
-      this.message = ''
+      if(this.message != ''){
+        this.$refs.chatContent.onMessageSend(this.message)
+        this.message = ''
+      }
     }
   }
 }

@@ -62,6 +62,7 @@ export default {
       this.dialog = false;
     },
     connect: function() {
+      this.chatRoomList = []
       //process.env.VUE_APP_API + 
         this.$axios.get('http://localhost:8080/chatroom/list',{
             headers:{

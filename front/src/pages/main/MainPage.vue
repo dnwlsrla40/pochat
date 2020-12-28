@@ -1,10 +1,10 @@
 <template>
   <q-page class="row q-pa-md q-gutter-x-md bg-grey-1">
 
-    <chat-list class="col-2" style="min-width : 317px !important;" />
+    <chat-list  ref="chatlist" class="col-2" style="min-width : 317px !important;" />
 
     <div class="col" style="min-width : 720px !important;">
-      <router-view @postUpdated="onPostUpdated" />
+      <router-view @chatRoomUpdated="onChatRoomUpdated" @postUpdated="onPostUpdated" />
     </div>
     
     <post-list ref="postlist" class="col-2" style="min-width : 317px !important;" />
@@ -28,6 +28,9 @@ export default {
   methods : {
     onPostUpdated : function () {
       this.$refs.postlist.connect();
+    },
+    onChatRoomUpdated : function () {
+      this.$refs.chatlist.connect();
     }
   }
 }

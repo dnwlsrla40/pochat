@@ -11,11 +11,11 @@
           <q-btn size="sm" color="grey-7" round flat icon="more_vert">
             <q-menu auto-close>
               <q-list>
-                <q-item clickable v-if="!isfavorite">
-                  <q-item-section @click="addFavorite">즐겨찾기</q-item-section>
+                <q-item clickable v-if="!isPostLike">
+                  <q-item-section @click="addPostLike">즐겨찾기</q-item-section>
                 </q-item>
-                <q-item clickable v-if="isfavorite">
-                  <q-item-section @click="addFavorite">즐겨찾기 취소</q-item-section>
+                <q-item clickable v-if="isPostLike">
+                  <q-item-section @click="deletePostLike">즐겨찾기 취소</q-item-section>
                 </q-item>
                 <q-item clickable>
                   <q-item-section @click="updatePost">수정하기</q-item-section>
@@ -31,8 +31,7 @@
     </q-card-section>
 
     <q-separator />
-    
-    <q-card-section class="scroll content" style="height : calc(100vh - 236px);">
+    <q-card-section class="scroll content" style="height : calc(100vh - 236px);" >
       <div v-html="body" />
     </q-card-section>
 
@@ -44,15 +43,18 @@ export default {
   name: 'PostContent',
     data () {
         return {
-            loading: true,
+            // loading: true,
             post: false,
             title: '',
             writer: '',
             body: '',
-            isfavorite: null
+            isPostLike: null
         }
     },
     computed: {
+      chatId : function () {
+        return this.$route.params.chatId;
+      },
       postId : function () {
         return this.$route.params.postId;
       },
@@ -64,7 +66,8 @@ export default {
       }
     },
     watch: {
-        'postId': 'connect'
+        'postId': 'connect',
+        'chatId': 'reset'
     },
     mounted(){
         if(this.token != null && this.token.length > 0){
@@ -74,22 +77,26 @@ export default {
         }
     },
     methods: {
+        reset: function () {
+          this.$router.push({name : 'content', params : {postId : -1}})
+        },
         connect: function() {
             this.post = false
-            this.loading = true
+            // this.loading = true
+            if(this.postId < 0) return;
             this.$axios.get('http://localhost:8080/post/'+this.postId, {
                 headers:{
                     "jwt-auth-token": this.token
                 },
             })
             .then((res) => {
-                this.loading = false
+                // this.loading = false
                 this.post = true
                 const postDetail = res.data.data
                 this.title = postDetail.title
                 this.writer = postDetail.user.username
                 this.body = postDetail.body
-                this.isfavorite = postDetail.favorite
+                this.isPostLike = postDetail.isFavorite
             }).catch((e) => {
                 console.error(e);
             })
@@ -100,8 +107,8 @@ export default {
                 message: messages
             })
         },
-        addFavorite: function() {
-            this.$axios.post('http://localhost:8080/post/favorite'
+        addPostLike: function() {
+            this.$axios.post('http://localhost:8080/postlike'
             ,JSON.stringify({
                 id : this.postId
             }),
@@ -114,20 +121,35 @@ export default {
             .then((res) => {
                 console.log(res.data.data);
                 if(res.data.status){
-                  if(res.data.data.favorite) {
-                    const messages = "즐겨찾기에 추가되었습니다!"
-                    this.triggerPositive(messages)
-                  } else if(!res.data.data.favorite) {
-                    const messages = "즐겨찾기가 취소되었습니다!"
-                    this.triggerPositive(messages)
-                  }
+                  const messages = "즐겨찾기에 추가되었습니다!"
+                  this.triggerPositive(messages)
+                }
+            }).catch((e) => {
+                console.error(e);
+            })
+        },
+        deletePostLike: function() {
+          this.$axios.delete('http://localhost:8080/postlike/delete/' + this.postId,
+            {
+                headers:{
+                    "jwt-auth-token": this.token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((res) => {
+                console.log(res.data.data);
+                if(res.data.status){
+                  const messages = "즐겨찾기가 취소되었습니다!"
+                  this.triggerPositive(messages)
+                  this.$emit('postUpdated')
                 }
             }).catch((e) => {
                 console.error(e);
             })
         },
         updatePost: function(){
-            this.$router.push(`/main/post/editor?id=${this.postId}`)
+            // this.$router.push(`/main/post/editor?id=${this.postId}`)
+            this.$router.push({name : 'posteditor', query: {id : this.postId}})
         },
         deletePost: function(){
             this.$axios.delete('http://localhost:8080/post/delete/' + this.postId,
