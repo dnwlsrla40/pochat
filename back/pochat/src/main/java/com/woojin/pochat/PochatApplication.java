@@ -4,6 +4,7 @@ import com.woojin.pochat.domain.chatroom.ChatRoom;
 import com.woojin.pochat.domain.chatroom.ChatRoomRepository;
 import com.woojin.pochat.util.Listener;
 import lombok.RequiredArgsConstructor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;

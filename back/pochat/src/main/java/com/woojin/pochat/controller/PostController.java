@@ -78,6 +78,7 @@ public class PostController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/list/{chatId}")
     public ResponseEntity<Map<String, Object>> getPostList(@PathVariable Long chatId){
+        System.out.println("ddddddddddddddddddddddddddddddddddddddddddddd");
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try{

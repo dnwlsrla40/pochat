@@ -8,6 +8,8 @@ import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.domain.user.UserRepository;
 import com.woojin.pochat.dto.FriendDto;
 import com.woojin.pochat.dto.PostDto;
+import com.woojin.pochat.mapper.FriendMybatisRepository;
+import com.woojin.pochat.mapper.FriendVO;
 import com.woojin.pochat.util.error.ExistFriendError;
 import com.woojin.pochat.util.error.ExistUserError;
 import com.woojin.pochat.util.error.NoUserError;
@@ -17,9 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -29,6 +31,9 @@ public class FriendService {
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final JwtService jwtService;
+
+    @Autowired
+    FriendMybatisRepository friendMybatisRepository;
 
     /*
         method function
@@ -142,18 +147,37 @@ public class FriendService {
         Parameter
          - id = 채팅방 id
      */
-//    @Transactional
-//    public List<Friend> getNewMemberList(Long id) {
-//
-//        // 접속중인 username 가져오기
-//        Map map = (Map)jwtService.get().get("User");
-//        String username = (String)map.get("username");
-//
-//        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
-//
-//        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(NoSuchElementException::new);
-//
-//        System.out.println(friendRepository.findFriendNotChatRoomMember(chatRoom));
-//        return friendRepository.findFriendNotChatRoomMember(chatRoom);
-//    }
+    @Transactional
+    public List<User> getNewMemberList(Long id) {
+
+        // 접속중인 username 가져오기
+        Map map = (Map)jwtService.get().get("User");
+        String username = (String)map.get("username");
+
+        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+
+        System.out.println("=========================================" + friendMybatisRepository.getNewFriend(loginUser.getId(),id).toString());
+
+        for (int i = 0; i < friendMybatisRepository.getNewFriend(loginUser.getId(),id).size(); i++) {
+            friendMybatisRepository.getNewFriend(loginUser.getId(),id).get(i);
+            System.out.println(friendMybatisRepository.getNewFriend(loginUser.getId(),id).get(i).getRecipient());
+        }
+
+        List<FriendVO> list = friendMybatisRepository.getNewFriend(loginUser.getId(),id);
+        List<User> newFriendList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println("get loginUser : " + loginUser.getId());
+            System.out.println("get sender : " + list.get(i).getSender());
+            if(loginUser.getId().compareTo(Long.parseLong(list.get(i).getSender())) == 0){
+                System.out.println("1 : " + userRepository.findById(Long.parseLong(list.get(i).getRecipient())).orElseThrow(NoSuchElementException::new).toString());
+                newFriendList.add(userRepository.findById(Long.parseLong(list.get(i).getRecipient())).orElseThrow(NoSuchElementException::new));
+            } else if(loginUser.getId().compareTo(Long.parseLong(list.get(i).getRecipient())) == 0){
+                System.out.println("2 : " + userRepository.findById(Long.parseLong(list.get(i).getRecipient())).orElseThrow(NoSuchElementException::new).toString());
+                newFriendList.add(userRepository.findById(Long.parseLong(list.get(i).getSender())).orElseThrow(NoSuchElementException::new));
+            } else{
+                System.out.println("3");
+            }
+        }
+        return newFriendList;
+    }
 }

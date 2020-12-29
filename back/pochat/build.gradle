@@ -39,6 +39,11 @@ dependencies {
 	// random string 관련
 	compile('org.apache.commons:commons-lang3:3.4')
 
+	// mybatis
+	compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.0')
+//	compile('org.mybatis:mybatis-spring:1.2.4')
+//	compile('org.mybatis:mybatis:3.3.1')
+
 	// mysql 관련
 	compile('mysql:mysql-connector-java')
 

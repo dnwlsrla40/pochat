@@ -1,6 +1,7 @@
 package com.woojin.pochat.controller;
 
 import com.woojin.pochat.domain.friend.Friend;
+import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.dto.FriendDto;
 import com.woojin.pochat.dto.PostDto;
 import com.woojin.pochat.service.FriendService;
@@ -189,21 +190,23 @@ public class FriendController {
         method
          - chatroom에 추가 할 새로운 friend 조회
      */
-//    @CrossOrigin(origins = "*", allowedHeaders = "*")
-//    @GetMapping("/friend/accept/{id}")
-//    public ResponseEntity<Map<String, Object>> getFriendAcceptList(@PathVariable Long id) {
-//        Map<String, Object> resultMap = new HashMap<>();
-//        HttpStatus status = null;
-//        try{
-//            List<Friend> memberList = friendService.getNewMemberList(id);
-//            resultMap.put("status", true);
-//            resultMap.put("data", memberList);
-//            status = HttpStatus.OK;
-//        } catch(RuntimeException e) {
-//            log.error("", e);
-//            resultMap.put("message", e.getMessage());
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        }
-//        return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//    }
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/friend/accept/{chatId}")
+    public ResponseEntity<Map<String, Object>> getFriendAcceptList(@PathVariable Long chatId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try{
+            List<User> newMemberList = friendService.getNewMemberList(chatId);
+            resultMap.put("status", true);
+            resultMap.put("data", newMemberList);
+            status = HttpStatus.OK;
+        } catch(RuntimeException e) {
+            log.error("", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+
 }

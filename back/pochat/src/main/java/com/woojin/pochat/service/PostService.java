@@ -4,6 +4,7 @@ import com.woojin.pochat.domain.chatroom.ChatRoom;
 import com.woojin.pochat.domain.chatroom.ChatRoomRepository;
 import com.woojin.pochat.domain.post.Post;
 import com.woojin.pochat.domain.post.PostRepository;
+import com.woojin.pochat.domain.postlike.PostLikeRepository;
 import com.woojin.pochat.domain.user.User;
 import com.woojin.pochat.domain.user.UserRepository;
 import com.woojin.pochat.dto.PostDto;
@@ -26,6 +27,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final PostLikeRepository postLikeRepository;
     private final JwtService jwtService;
 
     /*
@@ -119,7 +121,17 @@ public class PostService {
 
     @Transactional
     public void delete(Long postId) {
+
+        // 접속중인 username 가져오기
+        Map map = (Map)jwtService.get().get("User");
+        String username = (String)map.get("username");
+
+        User loginUser = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+
         Post deletedPost = postRepository.findById(postId).orElseThrow(NoSuchElementException::new);
+        if(postLikeRepository.findByUserAndPost(loginUser, deletedPost) != null){
+            postLikeRepository.delete(postLikeRepository.findByUserAndPost(loginUser, deletedPost));
+        }
         System.out.println("deletedPost: " + deletedPost);
         postRepository.delete(deletedPost);
     }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woojin.pochat.mapper.FriendMapper">
+    <select id="getNewFriend" resultType="com.woojin.pochat.mapper.FriendVO" parameterType="com.woojin.pochat.mapper.FriendParameter">
+        select myfriend.id as id, myfriend.recipient as recipient, myfriend.sender as sender
+        from (
+        select *
+        from friend as a
+        where (a.sender = #{userId} or a.recipient = #{userId}) and a.is_accept=true
+        ) as myfriend
+        where recipient not in (
+        select crm.user_id
+        from chat_room_member as crm
+        where crm.chatroom_id= #{chatRoomId}
+        ) or sender not in (
+        select crm.user_id
+        from chat_room_member as crm
+        where crm.chatroom_id= #{chatRoomId}
+        );
+    </select>
+</mapper>
