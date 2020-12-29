@@ -17,10 +17,10 @@
                 <q-item clickable v-if="isPostLike">
                   <q-item-section @click="deletePostLike">즐겨찾기 취소</q-item-section>
                 </q-item>
-                <q-item clickable>
+                <q-item clickable v-if="writer==login_user">
                   <q-item-section @click="updatePost">수정하기</q-item-section>
                 </q-item>
-                <q-item clickable>
+                <q-item clickable v-if="writer==login_user">
                   <q-item-section @click="deletePost">삭제하기</q-item-section>
                 </q-item>
               </q-list>
@@ -90,11 +90,15 @@ export default {
                 },
             })
             .then((res) => {
+                console.log("postDetail: ")
+                console.log(res)
+                console.log("res.data.data.user.username : " + res.data.data.user.username)
                 // this.loading = false
                 this.post = true
                 const postDetail = res.data.data
                 this.title = postDetail.title
                 this.writer = postDetail.user.username
+                console.log("writer: " + this.writer)
                 this.body = postDetail.body
                 this.isPostLike = postDetail.isFavorite
             }).catch((e) => {

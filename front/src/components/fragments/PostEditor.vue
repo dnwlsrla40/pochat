@@ -20,7 +20,7 @@
     </q-card-section>
 
     <q-card-actions class="q-pa-md flex justify-end">
-      <q-btn label="취소" to="/main" />
+      <q-btn label="취소" @click="$router.go(-1)" />
       <q-btn label="리셋" @click="onReset"/>
       <q-btn v-if="action=='작성'" label="작성하기" @click="createPost"/>
       <q-btn v-else label="수정하기" @click="updatePost"/>

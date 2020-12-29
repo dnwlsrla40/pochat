@@ -27,6 +27,7 @@ export default {
   },
   methods : {
     onPostUpdated : function () {
+      console.log("alsdjflasdjflasdlfkalsdjfladlkjlasfdjlkj")
       this.$refs.postlist.connect();
     },
     onChatRoomUpdated : function () {

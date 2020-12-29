@@ -65,7 +65,8 @@ export default {
     },
     methods: {
         connect: function() {
-          if(this.postId == undefined || this.postId < 0) return;
+          console.log("===========================")
+          // if(this.postId == undefined || this.postId < 0) return;
             this.isPostLike = true
             this.$axios.get('http://localhost:8080/post/list/' + this.chatId,{
                 headers:{
@@ -73,6 +74,7 @@ export default {
                 }
             })
             .then((res) => {
+                console.log("=====================" + res)
                 if(res.data.status){
                     this.list_name = "포스트"
                     this.postList = new Array;
@@ -88,6 +90,12 @@ export default {
                 }
             }).catch((e) => {
                 console.error(e);
+            })
+        },
+        triggerWarning : function(messages) {
+            this.$q.notify({
+            type: 'warning',
+            message: messages
             })
         },
         getPostDetail: function(item){
@@ -136,7 +144,9 @@ export default {
             this.$router.push({name : 'posteditor'})
           }
           else {
-            // this.q .notify
+            const warnMsg = '채팅방에서만 가능합니다.'
+              this.triggerWarning(warnMsg);
+              return;
           }
         }
     }

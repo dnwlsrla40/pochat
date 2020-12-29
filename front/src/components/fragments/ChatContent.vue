@@ -219,7 +219,7 @@ export default {
         this.addFriendDialog = true;
         },
         AddFriendSubmit: function(){
-            this.friendDialog = false;
+        this.addFriendDialog = false;
     }
   }
 }

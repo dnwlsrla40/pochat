@@ -19,7 +19,7 @@
                     </q-list>
                 </q-expansion-item>
             </q-card-section>
-            <!-- <q-scroll-area style="height : 280px;">
+            <q-scroll-area style="height : 280px;">
                 <q-list class="scroll">
                     <q-item clickable v-ripple v-for="(item, index) in friendList" :key="index">
                     <q-item-section avatar>
@@ -33,7 +33,7 @@
                     </q-item-section>
                     </q-item>
                 </q-list>
-            </q-scroll-area> -->
+            </q-scroll-area>
 
             <div class="q-gutter-x-xs">
                 <q-chip :label="item" removable v-for="item in select" :key="item.chatroom_id" @remove="onRemove(item)" />
@@ -54,7 +54,7 @@ export default {
     data () {
         return {
             select : [],
-            // friendList: [],
+            friendList: [],
             chatRoomMemberList: [],
         }
     },
@@ -71,10 +71,10 @@ export default {
     },
     mounted(){
         if(this.token != null && this.token.length > 0){
-            // this.getNewFriendList();
+            this.getNewFriendList();
             this.getChatRoomMemberList();
         } else {
-            this.$router.push('/login');
+            this.$router.push('/');
         }
     },
     methods : {
@@ -86,7 +86,8 @@ export default {
         },
         onRemove : function (val) {
             // 보여주기식 구현이라 그대로 따라하면 안될 가능성이 높음
-            this.select.pop(val);
+            // this.select.pop(val);
+            this.select.splice(this.select.indexOf(val), 1);
         },
         onSubmit : function () {
             console.log("newMember: " + JSON.stringify(this.select));
@@ -107,7 +108,8 @@ export default {
                 // console.log(res.data.data)
                 // res.data.data.chatroom_id = res.data.data.id
                 // this.$emit('submit', res.data.data)
-                // this.$q.loading.hide()
+                this.$emit('submit')
+                this.$q.loading.hide()
             }).catch((e) => {
                 console.error(e)
                 // this.$q.loading.hide()
@@ -116,37 +118,28 @@ export default {
         onCancel : function () {
             this.$emit('cancel')
         },
-        // getNewFriendList: function(){
-        //     this.$axios.get('http://localhost:8080/friend/accept/'+this.chatId,{
-        //         headers:{
-        //             "jwt-auth-token": this.token
-        //         },
-        //     })
-        //     .then((res) => {
-        //         console.log(res.data.data);
-        //         if(res.data.status){
-        //             for(var i=0; i<res.data.data.length; i++){
-        //                 if(this.login_user == res.data.data[i].sender.username){
-        //                     this.friendList.push(
-        //                         {
-        //                             imgSource: "http://localhost:8080/img" + res.data.data[i].recipient.thumbnail,
-        //                             friendName: res.data.data[i].recipient.username
-        //                         }
-        //                     )
-        //                 } else if(this.login_user == res.data.data[i].recipient.username){
-        //                     this.friendList.push(
-        //                         {
-        //                             imgSource: "http://localhost:8080/img" + res.data.data[i].sender.thumbnail,
-        //                             friendName: res.data.data[i].sender.username
-        //                         }
-        //                     )
-        //                 }
-        //             }
-        //         }
-        //     }).catch((e) => {
-        //         console.error(e);
-        //     })
-        // },
+        getNewFriendList: function(){
+            this.$axios.get('http://localhost:8080/friend/accept/'+this.chatId,{
+                headers:{
+                    "jwt-auth-token": this.token
+                },
+            })
+            .then((res) => {
+                console.log(res.data);
+                if(res.data.status){
+                    for(var i=0; i<res.data.data.length; i++){
+                        this.friendList.push(
+                            {
+                                imgSource: "http://localhost:8080/img" + res.data.data[i].thumbnail,
+                                friendName: res.data.data[i].username
+                            }
+                        )
+                    }
+                }
+            }).catch((e) => {
+                console.error(e);
+            })
+        },
         getChatRoomMemberList : function() {
             this.$axios.get('http://localhost:8080/chatroommember/'+this.chatId,{
                 headers:{

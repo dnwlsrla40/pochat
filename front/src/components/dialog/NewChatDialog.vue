@@ -62,16 +62,27 @@ export default {
     if(this.token != null && this.token.length > 0){
         this.getAcceptedFriendList();
     } else {
-        this.$router.push('/login');
+        this.$router.push('/');
     }
   },
   methods : {
+    triggerWarning : function(messages) {
+      this.$q.notify({
+      type: 'warning',
+      message: messages
+      })
+    },
     onRemove : function (val) {
       // 보여주기식 구현이라 그대로 따라하면 안될 가능성이 높음
       this.select.pop(val);
     },
     onSubmit : function () {
       console.log("roomMember: " + JSON.stringify(this.select));
+      if(this.chatRoomName == ''){
+        const warnMsg = '채팅방 이름을 입력해주세요';
+          this.triggerWarning(warnMsg);
+          return;
+      }
       this.$q.loading.show()
       this.$axios.post('http://localhost:8080/chatroom',JSON.stringify(
       {
